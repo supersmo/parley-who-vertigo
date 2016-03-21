@@ -14,7 +14,8 @@ public class GameFlow {
 			players.Add(new MovePlayer(gameObject, i));
 		}
 
-		currentGame = new MoveSays (this);
+		//currentGame = new MoveSays (this);
+		currentGame = new ShakeIt (this);
 		this.behaviour = behaviour;
 	}
 
@@ -62,6 +63,14 @@ public class GameFlow {
 		currentGame.StartGame ();
 	}
 
+	public TunableVariables GetTunables() {
+		return behaviour.GetComponent<TunableVariables> ();
+	}
+
+	public void endCurrentGame(MovePlayer winner) {
+		endCurrentGame (new List<MovePlayer>() { winner });
+	}
+
 	public void endCurrentGame(List<MovePlayer> winners) {
 		Debug.Log ("Game ends, winner(s): " + winners);
 
@@ -71,7 +80,7 @@ public class GameFlow {
 
 		foreach (var winner in winners) {
 			//winner.LEDColor = Color.white;
-			behaviour.StartCoroutine(winner.WinAnimation(behaviour.GetComponent<TunableVariables>()));
+			behaviour.StartCoroutine(winner.WinAnimation(GetTunables()));
 			winner.Score++;
 		}
 
@@ -88,6 +97,7 @@ public class GameFlow {
 			string result = "";
 			if (currentGame != null) {
 				result += "current game: " + currentGame;
+				result += "\n" + currentGame.StatusMessage ();
 			} else {
 				result += "no current game";
 			}

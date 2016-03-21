@@ -35,6 +35,10 @@ public class MovePlayer {
 			yield return new WaitForSeconds(tunables.BlinkDurationSec);
 		}
 	}
+
+	public bool NowShaking(TunableVariables tunables) {
+		return move.Acceleration.x >= tunables.ShakeThreshold;
+	}
 		
 	public Color LEDColor
 	{

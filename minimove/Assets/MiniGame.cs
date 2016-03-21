@@ -11,6 +11,10 @@ public abstract class MiniGame {
 	public virtual void ButtonPressed(MovePlayer player, PSMoveButton button) {
 	}
 
+	public virtual string StatusMessage() {
+		return "";
+	}
+
 	public abstract void StartGame ();
 	public abstract void Update ();
 }

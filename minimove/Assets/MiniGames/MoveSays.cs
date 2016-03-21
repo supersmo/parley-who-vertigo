@@ -32,7 +32,7 @@ public class MoveSays : MiniGame {
 			Debug.Log ("Button Pressed on " + player.PlayerNumber + " : " + button + " -> color: " + color);
 			if (color == player.LEDColor) {
 				Debug.Log ("YAY!");
-				gameFlow.endCurrentGame (new List<MovePlayer>() { player });
+				gameFlow.endCurrentGame (player);
 			} else {
 				Debug.Log ("Nay :/");
 			}
@@ -42,6 +42,5 @@ public class MoveSays : MiniGame {
 	}
 
 	public override void Update() {
-		
 	}
 }
