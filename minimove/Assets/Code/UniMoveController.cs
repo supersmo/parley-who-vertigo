@@ -130,7 +130,7 @@ public class UniMoveButtonEventArgs : EventArgs
 public class UniMoveController : MonoBehaviour
 {
 	#region private instance variables
-	
+
 	/// <summary>
     /// The handle for this controller. This pointer is what the psmove library uses for reading data via the hid library.
     /// </summary>

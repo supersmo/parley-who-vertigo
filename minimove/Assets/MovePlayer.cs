@@ -6,6 +6,7 @@ public class MovePlayer {
 	int playerNumber;
 	public UniMoveController move;
 	Color color;
+	int score;
 
 	public MovePlayer(GameObject gameObject, int playerNumber) {
 		this.playerNumber = playerNumber;
@@ -19,12 +20,22 @@ public class MovePlayer {
 			}
 		}
 		this.color = Color.white;
+		this.score = 0;
 	}
 
 	public void Update() {
 		//
 	}
 
+	public IEnumerator WinAnimation(TunableVariables tunables) {
+		for (int i=0; i<tunables.WinAnimationBlinks; i++) {
+			LEDColor = tunables.WinAnimationColor;
+			yield return new WaitForSeconds(tunables.BlinkDurationSec);
+			LEDColor = Color.black;
+			yield return new WaitForSeconds(tunables.BlinkDurationSec);
+		}
+	}
+		
 	public Color LEDColor
 	{
 		get { return color; }
@@ -34,5 +45,11 @@ public class MovePlayer {
 	public int PlayerNumber
 	{
 		get { return playerNumber; }
+	}
+
+	public int Score
+	{
+		get { return score; }
+		set { score = value; }
 	}
 }
