@@ -14,8 +14,13 @@ public class GameFlow {
 		int count = UniMoveController.GetNumConnected ();
 		Debug.Log ("Connected controllers: " + count);
 
+		int player = 0;
 		for (int i = 0; i < count; i++) {
-			players.Add(new MovePlayer(gameObject, i));
+			MovePlayer mp = new MovePlayer (gameObject, player);
+			if (mp.Valid()) {
+				player++;
+				players.Add (mp);
+			}
 		}
 
 		this.behaviour = behaviour;

@@ -36,6 +36,10 @@ public class MovePlayer {
 		this.score = 0;
 	}
 
+	public bool Valid() {
+		return (move.ConnectionType == PSMoveConnectionType.Bluetooth);
+	}
+
 	public void Update() {
 		//
 	}
