@@ -2,42 +2,25 @@
 using System.Collections.Generic;
 
 public class MoveSays : MiniGame {
-    static Dictionary<PSMoveButton, Color> buttonToColor = new Dictionary<PSMoveButton, Color>() {
-		{ PSMoveButton.Square, Color.magenta },
-		{ PSMoveButton.Triangle, Color.green },
-		{ PSMoveButton.Cross, Color.blue },
-		{ PSMoveButton.Circle, Color.red },
-	};
-
 	public MoveSays(GameFlow gameFlow) : base(gameFlow) {
 	}
 
 	public override void StartGame() {
-		System.Random rnd = new System.Random();
-
-		List<Color> colors = new List<Color>();
-		foreach (var color in buttonToColor.Values) {
-			colors.Add(color);
-		}
-
 		foreach (var player in gameFlow.Players) {
-			// player.setColorAnimation({Red, 200, Green, 200, ..., player.color})
-			player.LEDColor = colors[rnd.Next(colors.Count)];
+			player.LEDColor = PSMoveColor.getRandomColor();
 		}
 	}
 
 	public override void ButtonPressed(MovePlayer player, PSMoveButton button) {
-		if (buttonToColor.ContainsKey (button)) {
-			Color color = buttonToColor [button];
-			Debug.Log ("Button Pressed on " + player.PlayerNumber + " : " + button + " -> color: " + color);
+		if (PSMoveColor.isColorButton (button)) {
+			Color color = PSMoveColor.colorForButton (button);
+
 			if (color == player.LEDColor) {
-				Debug.Log ("YAY!");
 				gameFlow.endCurrentGame (player);
 			} else {
-				Debug.Log ("Nay :/");
+				// TODO: Play "dead" animation
+				player.LEDColor = Color.black;
 			}
-		} else {
-			Debug.Log ("Ignoring button press: " + button);
 		}
 	}
 
