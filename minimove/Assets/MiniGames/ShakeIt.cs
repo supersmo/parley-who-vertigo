@@ -38,4 +38,8 @@ public class ShakeIt : MiniGame {
 			}
 		}
 	}
+
+	public override bool CanSupportPlayers(int players) {
+		return true;
+	}
 }

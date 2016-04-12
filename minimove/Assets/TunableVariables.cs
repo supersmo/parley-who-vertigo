@@ -12,4 +12,7 @@ public class TunableVariables : MonoBehaviour {
 
 	// Shake it win threshold
 	public int ShakeItWinThreshold = 100;
+
+	// How many mini games a round is
+	public int DefaultNumberOfGames = 10;
 }

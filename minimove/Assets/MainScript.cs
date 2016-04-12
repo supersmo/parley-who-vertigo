@@ -8,7 +8,6 @@ public class MainScript : MonoBehaviour {
 
 	void Start () {
 		gameFlow = new GameFlow (gameObject, this);
-		gameFlow.startCurrentGame ();
 	}
 
 	void OnGUI() {

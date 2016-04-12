@@ -2,21 +2,45 @@
 using System.Collections.Generic;
 
 public class GameFlow {
+	private static readonly System.Random rnd = new System.Random();
 	List<MovePlayer> players = new List<MovePlayer>();
 	MiniGame currentGame = null;
 	MonoBehaviour behaviour = null;
+	int remainingGames = 0;
 
 	public GameFlow(GameObject gameObject, MonoBehaviour behaviour) {
 		int count = UniMoveController.GetNumConnected ();
 		Debug.Log ("Connected controllers: " + count);
 
 		for (int i = 0; i < count; i++) {
-			players.Add(new MovePlayer(gameObject, i));
+			players.Add(new MovePlayer(this, gameObject, i));
 		}
 
-		//currentGame = new MoveSays (this);
-		currentGame = new ShakeIt (this);
 		this.behaviour = behaviour;
+		this.remainingGames = GetTunables ().DefaultNumberOfGames;
+
+		SelectNewGame ();
+	}
+
+	public void SelectNewGame() {
+		Debug.Log("Selecting new game");
+		if (remainingGames == 0) {
+			Debug.Log ("Session ends");
+		} else {
+			List<MiniGame> games = new List<MiniGame> ();
+			games.Add (new MoveSays (this));
+			games.Add (new ShakeIt (this));
+
+			MiniGame candidate = null;
+			do {
+				candidate = games [rnd.Next (games.Count)];
+			} while (!candidate.CanSupportPlayers(players.Count));
+
+			currentGame = candidate;
+				
+			currentGame.StartGame ();
+			remainingGames--;
+		}
 	}
 
 	void UpdateControllers() {
@@ -59,10 +83,6 @@ public class GameFlow {
 		}
 	}
 
-	public void startCurrentGame() {
-		currentGame.StartGame ();
-	}
-
 	public TunableVariables GetTunables() {
 		return behaviour.GetComponent<TunableVariables> ();
 	}
@@ -77,15 +97,23 @@ public class GameFlow {
 		foreach (var player in players) {
 			player.LEDColor = Color.black;
 		}
-
-		foreach (var winner in winners) {
-			//winner.LEDColor = Color.white;
-			behaviour.StartCoroutine(winner.WinAnimation(GetTunables()));
-			winner.Score++;
-		}
-
-		// TODO: Select a new game
+			
+		// Disable access to "old" current game; new current game
+		// will be set by the winner player 
 		currentGame = null;
+
+		if (winners.Count == 0) {
+			SelectNewGame ();
+			// TODO: Play "nobody wins" sound
+		} else {
+			bool first = true;
+			foreach (var winner in winners) {
+				//winner.LEDColor = Color.white;
+				behaviour.StartCoroutine (winner.WinAnimation (GetTunables (), first));
+				winner.Score++;
+				first = false;
+			}
+		}
 	}
 
 	public List<MovePlayer> Players {

@@ -3,12 +3,14 @@ using System.Collections;
 
 
 public class MovePlayer {
+	GameFlow gameFlow;
 	int playerNumber;
 	public UniMoveController move;
 	Color color;
 	int score;
 
-	public MovePlayer(GameObject gameObject, int playerNumber) {
+	public MovePlayer(GameFlow gameFlow, GameObject gameObject, int playerNumber) {
+		this.gameFlow = gameFlow;
 		this.playerNumber = playerNumber;
 		this.move = gameObject.AddComponent<UniMoveController> ();
 		for (int j=0; j<100; j++) {
@@ -27,12 +29,16 @@ public class MovePlayer {
 		//
 	}
 
-	public IEnumerator WinAnimation(TunableVariables tunables) {
+	public IEnumerator WinAnimation(TunableVariables tunables, bool first) {
 		for (int i=0; i<tunables.WinAnimationBlinks; i++) {
 			LEDColor = tunables.WinAnimationColor;
 			yield return new WaitForSeconds(tunables.BlinkDurationSec);
 			LEDColor = Color.black;
 			yield return new WaitForSeconds(tunables.BlinkDurationSec);
+		}
+
+		if (first) {
+			gameFlow.SelectNewGame ();
 		}
 	}
 
@@ -43,7 +49,7 @@ public class MovePlayer {
 	public Color LEDColor
 	{
 		get { return color; }
-		set { color = value; move.SetLED (color); }
+		set { color = value; move.SetLED (color); Debug.Log ("Set Color to " + color); }
 	}
 
 	public int PlayerNumber

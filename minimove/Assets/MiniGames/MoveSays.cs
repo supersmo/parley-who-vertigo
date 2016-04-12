@@ -7,6 +7,7 @@ public class MoveSays : MiniGame {
 
 	public override void StartGame() {
 		foreach (var player in gameFlow.Players) {
+			Debug.Log ("Start GAME PLAYER " + player);
 			player.LEDColor = PSMoveColor.getRandomColor();
 		}
 	}
@@ -25,5 +26,9 @@ public class MoveSays : MiniGame {
 	}
 
 	public override void Update() {
+	}
+
+	public override bool CanSupportPlayers(int players) {
+		return true;
 	}
 }
