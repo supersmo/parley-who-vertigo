@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
+
 
 public class GameFlow {
 	private static readonly System.Random rnd = new System.Random();
@@ -13,7 +15,7 @@ public class GameFlow {
 		Debug.Log ("Connected controllers: " + count);
 
 		for (int i = 0; i < count; i++) {
-			players.Add(new MovePlayer(this, gameObject, i));
+			players.Add(new MovePlayer(gameObject, i));
 		}
 
 		this.behaviour = behaviour;
@@ -23,13 +25,19 @@ public class GameFlow {
 	}
 
 	public void SelectNewGame() {
+		// TODO: "New game starts sound"
+
+		foreach (var player in players) {
+			player.LEDColor = Color.black;
+		}
+
 		Debug.Log("Selecting new game");
 		if (remainingGames == 0) {
 			Debug.Log ("Session ends");
 		} else {
 			List<MiniGame> games = new List<MiniGame> ();
 			games.Add (new MoveSays (this));
-			games.Add (new ShakeIt (this));
+			//games.Add (new ShakeIt (this));
 
 			MiniGame candidate = null;
 			do {
@@ -61,18 +69,31 @@ public class GameFlow {
 
 			if (player.move.GetButtonDown (PSMoveButton.Cross)) {
 				Debug.Log ("Button pressed");
-				GameObject bling = GameObject.Find ("BlingSound");
-				AudioSource blingas = bling.GetComponent<AudioSource> ();
-
-				GameObject go = new GameObject ("HOHO");
-				AudioSource src = go.AddComponent<AudioSource> ();
-				src.volume = 0.5f;
-				src.clip = blingas.clip;
-				src.Play ();
 			}*/
 
 			player.Update ();
 		}
+	}
+
+	public IEnumerator DestroySoundLater(GameObject go, AudioSource src) {
+		while (src.isPlaying) {
+			yield return new WaitForSeconds (0.01f);
+		}
+
+		Object.Destroy (go);
+	}
+		
+	public void PlaySound(string sound, float volume=1.0f, float pitch=1.0f) {
+		GameObject soundObject = GameObject.Find (sound);
+		AudioSource soundSource = soundObject.GetComponent<AudioSource> ();
+
+		GameObject go = new GameObject ("Playing:" + sound);
+		AudioSource src = go.AddComponent<AudioSource> ();
+		src.volume = volume;
+		src.pitch = pitch;
+		src.clip = soundSource.clip;
+		src.Play ();
+		behaviour.StartCoroutine (DestroySoundLater (go, src));
 	}
 
 	public void Update () {
@@ -85,6 +106,10 @@ public class GameFlow {
 
 	public TunableVariables GetTunables() {
 		return behaviour.GetComponent<TunableVariables> ();
+	}
+
+	public void endCurrentGameNoWinner() {
+		endCurrentGame (new List<MovePlayer>() {});
 	}
 
 	public void endCurrentGame(MovePlayer winner) {
@@ -103,17 +128,26 @@ public class GameFlow {
 		currentGame = null;
 
 		if (winners.Count == 0) {
+			// TODO: Play "nobody wins" sound/animation and wait a bit before new game
 			SelectNewGame ();
-			// TODO: Play "nobody wins" sound
 		} else {
-			bool first = true;
+			OnFinished onFinished = delegate () {
+				SelectNewGame();
+			};
+
 			foreach (var winner in winners) {
 				//winner.LEDColor = Color.white;
-				behaviour.StartCoroutine (winner.WinAnimation (GetTunables (), first));
+				StartCoroutine (winner.WinAnimation (GetTunables (), onFinished));
 				winner.Score++;
-				first = false;
+				onFinished = delegate() {
+					// Do nothing
+				};
 			}
 		}
+	}
+
+	public void StartCoroutine(IEnumerator coroutine) {
+		behaviour.StartCoroutine (coroutine);
 	}
 
 	public List<MovePlayer> Players {

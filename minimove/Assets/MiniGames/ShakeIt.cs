@@ -29,7 +29,17 @@ public class ShakeIt : MiniGame {
 		foreach (var player in gameFlow.Players) {
 			if (player.NowShaking(tunables)) {
 				counters [player.PlayerNumber]++;
-			}
+				int currentValue = counters [player.PlayerNumber];
+				int mod = 7;
+				if (currentValue == tunables.ShakeItWinThreshold) {
+					gameFlow.PlaySound ("BalloonExplosionSound");
+				} else if (currentValue % mod == 0) {
+					int mode = (currentValue / mod) % 2;
+					//gameFlow.PlaySound ("InflateSound", 3f * (float)currentValue / 100f);
+					gameFlow.PlaySound ("SqueakSound", 3f * (float)currentValue / 100f,
+						(mode == 0) ? 1f : 1.5f);
+				}
+			} 
 
 			player.LEDColor = Color.green * (float)counters [player.PlayerNumber] / (float)tunables.ShakeItWinThreshold;
 
