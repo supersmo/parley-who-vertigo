@@ -11,7 +11,7 @@ public class Freeze : MiniGame {
 	public Freeze(GameFlow gameFlow) : base(gameFlow) {}
 
 	public override string StatusMessage() {
-		return "Freeze!";
+		return "Freeze, man!";
 	}
 
 	public override void StartGame () {

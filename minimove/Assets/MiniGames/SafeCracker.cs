@@ -25,10 +25,10 @@ public class SafeCracker : MiniGame {
 	}
 
 	public override string StatusMessage() {
-		string result = "";
-		for (int i = 0; i < angles.Length; i++) {
+		string result = "You crack me up little buddy";
+		/*for (int i = 0; i < angles.Length; i++) {
 			result += "[" + i + "] = " + angles [i] + ", ";
-		}/*
+		}
 		result += "\n";
 		for (int i = 0; i < targetAngles.Length; i++) {
 			result += "targetAngles[" + i + "] = " + targetAngles [i] + ", ";

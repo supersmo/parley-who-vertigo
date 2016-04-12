@@ -9,6 +9,10 @@ public class MoveSays : MiniGame {
 	public MoveSays(GameFlow gameFlow) : base(gameFlow) {
 	}
 
+	public override string StatusMessage() {
+		return "Pressz se KOLOR!";
+	}
+		
 	public override void StartGame() {
 		OnFinished onIntroBlinkingFinished = delegate() {
 			playersReady++;

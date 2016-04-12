@@ -36,10 +36,10 @@ public class ShakeIt : MiniGame {
 	}
 
 	public override string StatusMessage() {
-		string result = "";
-		for (int i = 0; i < counters.Length; i++) {
+		string result = "Balooooooonit up pump it baloon baloo the bear";
+		/*for (int i = 0; i < counters.Length; i++) {
 			result += "counters[" + i + "] = " + counters [i] + ", ";
-		}
+		}*/
 		return result;
 	}
 

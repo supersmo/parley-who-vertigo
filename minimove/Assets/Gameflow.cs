@@ -177,6 +177,8 @@ public class GameFlow {
 			} else {
 				result += currentMessage;
 			}
+
+			result += "\n";
 			foreach (var player in players) {
 				result += "\n";
 				result += "Player " + (player.PlayerNumber + 1) + ": " + player.Score + " points";
