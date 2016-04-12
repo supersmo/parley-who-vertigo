@@ -127,15 +127,20 @@ public class GameFlow {
 	}
 
 	public void endCurrentGame(List<MovePlayer> winners) {
+		if (currentGame == null) {
+			return;
+		}
+
+		// Disable access to "old" current game; new current game
+		// will be set by the winner player 
+		currentGame = null;
+
+
 		Debug.Log ("Game ends, winner(s): " + winners);
 
 		foreach (var player in players) {
 			player.LEDColor = Color.black;
 		}
-			
-		// Disable access to "old" current game; new current game
-		// will be set by the winner player 
-		currentGame = null;
 
 		if (winners.Count == 0) {
 			// TODO: Play "nobody wins" sound/animation and wait a bit before new game

@@ -70,6 +70,7 @@ public class ShakeIt : MiniGame {
 
 			if (counters [player.PlayerNumber] >= tunables.ShakeItWinThreshold) {
 				gameFlow.endCurrentGame (player);
+				break;
 			}
 		}
 	}
