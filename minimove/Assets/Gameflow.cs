@@ -9,6 +9,7 @@ public class GameFlow {
 	MiniGame currentGame = null;
 	MonoBehaviour behaviour = null;
 	int remainingGames = 0;
+	string currentMessage = "***";
 
 	public GameFlow(GameObject gameObject, MonoBehaviour behaviour) {
 		int count = UniMoveController.GetNumConnected ();
@@ -34,15 +35,19 @@ public class GameFlow {
 
 		foreach (var player in players) {
 			player.LEDColor = Color.black;
+			player.Rumble = 0f;
 		}
 
 		Debug.Log("Selecting new game");
 		if (remainingGames == 0) {
 			Debug.Log ("Session ends");
+			currentMessage = "Session ** Ends";
 		} else {
 			List<MiniGame> games = new List<MiniGame> ();
 			games.Add (new MoveSays (this));
-			//games.Add (new ShakeIt (this));
+			games.Add (new ShakeIt (this));
+			games.Add (new Freeze (this));
+			games.Add (new SafeCracker(this));
 
 			MiniGame candidate = null;
 			do {
@@ -136,6 +141,10 @@ public class GameFlow {
 			// TODO: Play "nobody wins" sound/animation and wait a bit before new game
 			SelectNewGame ();
 		} else {
+			string[] winningSounds = new string[] { "WinPlayer1Sound", "WinPlayer2Sound" };
+
+			PlaySound (winningSounds[winners[0].PlayerNumber % winningSounds.Length], 0.2f);
+
 			OnFinished onFinished = delegate () {
 				SelectNewGame();
 			};
@@ -166,7 +175,7 @@ public class GameFlow {
 				result += "current game: " + currentGame;
 				result += "\n" + currentGame.StatusMessage ();
 			} else {
-				result += "no current game";
+				result += currentMessage;
 			}
 			foreach (var player in players) {
 				result += "\n";

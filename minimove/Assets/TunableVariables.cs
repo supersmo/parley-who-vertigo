@@ -7,8 +7,11 @@ public class TunableVariables : MonoBehaviour {
 	public float BlinkDurationSec = .1f;
 	public Color WinAnimationColor = Color.white;
 
-	// Accelerometer X threshold to detect "shaking"
+	// Accelerometer magnitude threshold to detect "shaking"
 	public float ShakeThreshold = 3.5f;
+
+	// Accelerometer magnitude for detecting "unstable" (not frozen)
+	public float UnstableThreshold = 1.2f;
 
 	// Shake it win threshold
 	public int ShakeItWinThreshold = 100;
