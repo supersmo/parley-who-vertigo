@@ -25,23 +25,56 @@ public class GameFlow {
 		}
 
 		this.behaviour = behaviour;
+		ResetGame ();
+	}
+
+	public void ResetGame() {
 		this.remainingGames = GetTunables ().DefaultNumberOfGames;
 
+		foreach (var player in players) {
+			player.Score = 0;
+		}
+
 		SelectNewGame ();
+	}
+
+	public IEnumerator PlaySoundDelayed(string sound, float delaySec) {
+		yield return new WaitForSeconds (delaySec);
+		PlaySound (sound);
 	}
 
 	public void SelectNewGame() {
 		// TODO: "New game starts sound"
 
+		int maxScore = 0;
 		foreach (var player in players) {
 			player.LEDColor = Color.black;
 			player.Rumble = 0f;
+			maxScore = Mathf.Max (maxScore, player.Score);
 		}
-
+			
 		Debug.Log("Selecting new game");
 		if (remainingGames == 0) {
 			Debug.Log ("Session ends");
 			currentMessage = "Session ** Ends";
+			int remainingWinners = 0;
+
+			StartCoroutine (PlaySoundDelayed ("GameWin2Sound", GetTunables().GameWinAnimationWaitBeforeSec));
+
+			foreach (var player in players) {
+				OnFinished onFinished = delegate () {
+					Debug.Log("onFinished called");
+					remainingWinners -= 1;
+					if (remainingWinners == 0) {
+						ResetGame();
+					}
+				};
+				Debug.Log ("Player score: " + player.Score + ", max score: " + maxScore);
+				if (maxScore == player.Score) {
+					remainingWinners += 1;
+					StartCoroutine(player.GameWinAnimation (GetTunables (), onFinished));
+				}
+			}
 		} else {
 			List<MiniGame> games = new List<MiniGame> ();
 			games.Add (new MoveSays (this));

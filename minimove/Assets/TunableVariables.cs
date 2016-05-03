@@ -18,4 +18,20 @@ public class TunableVariables : MonoBehaviour {
 
 	// How many mini games a round is
 	public int DefaultNumberOfGames = 10;
+
+	// How many color-to-color fades we have
+	public int GameWinAnimationFades = 25;
+
+	// How many steps we have between two color fades
+	public int GameWinAnimationFadeSteps = 5;
+
+	// How long a single fade step takes
+	public float FadeDurationSec = 0.02f;
+
+	// How long to make the controller black before the game win animation
+	public float GameWinAnimationWaitBeforeSec = .5f;
+
+	// How long to make the controller black after the game win animation
+	public float GameWinAnimationWaitAfterSec = 2f;
+
 }

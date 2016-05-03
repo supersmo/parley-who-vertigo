@@ -74,6 +74,29 @@ public class MovePlayer {
 
 	}
 
+	public IEnumerator GameWinAnimation(TunableVariables tunables, OnFinished onFinished) {
+		List<AnimationPart> parts = new List<AnimationPart>();
+
+		parts.Add (new AnimationPart (Color.black, tunables.GameWinAnimationWaitBeforeSec));
+
+		Color currentColor = Color.white;
+		for (int i = 0; i < tunables.GameWinAnimationFades; i++) {
+			Color nextColor = (currentColor == Color.white) ? PSMoveColor.getRandomColor () : Color.white;
+			int jmax = tunables.GameWinAnimationFadeSteps;
+			for (int j = 0; j < jmax; j++) {
+				float alpha = (float)j / (float)(jmax - 1);
+				Color mixed = currentColor * (1f - alpha) + nextColor * alpha;
+				parts.Add (new AnimationPart (mixed, tunables.FadeDurationSec));
+			}
+			currentColor = nextColor;
+		}
+
+		parts.Add (new AnimationPart (Color.black, tunables.GameWinAnimationWaitAfterSec));
+
+		return SphereColorAnimation (parts, onFinished);
+
+	}
+
 	public bool NowShaking(TunableVariables tunables) {
 		return (move.Acceleration.magnitude >= tunables.ShakeThreshold);
 	}
