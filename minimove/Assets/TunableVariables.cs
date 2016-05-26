@@ -43,4 +43,10 @@ public class TunableVariables : MonoBehaviour {
 	// Intensity multiplicator for games where the controller is usually dark
 	// (e.g. in SafeCracker, the intensity when users are searching for the code)
 	public float ColorIntensityDuringGameplay = 0.2f;
+
+	// Time (in seconds) that each controller lights up in attract mode
+	public float AttractLoopDelaySec = 0.4f;
+
+	// Seconds the game start is delayed after everyone is ready
+	public float AttractStartDelaySec = 7.0f;
 }

@@ -118,7 +118,11 @@ public class MovePlayer {
 	public bool IsTriggerPressed() {
 		return move.GetButton (PSMoveButton.Trigger);
 	}
-		
+
+	public bool IsMovePressed() {
+		return move.GetButton (PSMoveButton.Move);
+	}
+
 	public Color LEDColor
 	{
 		get { return color; }

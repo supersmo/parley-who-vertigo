@@ -35,6 +35,13 @@ public class GameFlow {
 			player.Score = 0;
 		}
 
+		currentGame = new AttractMode (this);
+		currentGame.StartGame ();
+		//SelectNewGame ();
+	}
+
+	public void EveryoneIsReady() {
+		currentGame = null;
 		SelectNewGame ();
 	}
 
