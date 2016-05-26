@@ -34,4 +34,9 @@ public class TunableVariables : MonoBehaviour {
 	// How long to make the controller black after the game win animation
 	public float GameWinAnimationWaitAfterSec = 2f;
 
+	// Disable and enable minigames on the fly
+	public bool EnableFreeze = true;
+	public bool EnableMoveSays = true;
+	public bool EnableSafeCracker = true;
+	public bool EnableShakeIt = true;
 }

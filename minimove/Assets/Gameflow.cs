@@ -45,6 +45,7 @@ public class GameFlow {
 
 	public void SelectNewGame() {
 		// TODO: "New game starts sound"
+		var tunables = GetTunables();
 
 		int maxScore = 0;
 		foreach (var player in players) {
@@ -77,10 +78,18 @@ public class GameFlow {
 			}
 		} else {
 			List<MiniGame> games = new List<MiniGame> ();
-			games.Add (new MoveSays (this));
-			games.Add (new ShakeIt (this));
-			games.Add (new Freeze (this));
-			games.Add (new SafeCracker(this));
+			if (tunables.EnableMoveSays) {
+				games.Add (new MoveSays (this));
+			}
+			if (tunables.EnableShakeIt) {
+				games.Add (new ShakeIt (this));
+			}
+			if (tunables.EnableFreeze) {
+				games.Add (new Freeze (this));
+			}
+			if (tunables.EnableSafeCracker) {
+				games.Add (new SafeCracker (this));
+			}
 
 			MiniGame candidate = null;
 			do {
