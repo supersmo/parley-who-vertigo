@@ -39,4 +39,8 @@ public class TunableVariables : MonoBehaviour {
 	public bool EnableMoveSays = true;
 	public bool EnableSafeCracker = true;
 	public bool EnableShakeIt = true;
+
+	// Intensity multiplicator for games where the controller is usually dark
+	// (e.g. in SafeCracker, the intensity when users are searching for the code)
+	public float ColorIntensityDuringGameplay = 0.2f;
 }

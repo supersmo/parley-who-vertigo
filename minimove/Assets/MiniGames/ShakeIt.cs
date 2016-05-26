@@ -66,7 +66,9 @@ public class ShakeIt : MiniGame {
 				}
 			} 
 
-			player.LEDColor = PumpingColor * (float)counters [player.PlayerNumber] / (float)tunables.ShakeItWinThreshold;
+			float intensity = (float)counters [player.PlayerNumber] / (float)tunables.ShakeItWinThreshold;
+			float baseIntensity = tunables.ColorIntensityDuringGameplay;
+			player.LEDColor = PumpingColor * (baseIntensity + (1f - baseIntensity) * intensity);
 
 			if (counters [player.PlayerNumber] >= tunables.ShakeItWinThreshold) {
 				gameFlow.endCurrentGame (player);

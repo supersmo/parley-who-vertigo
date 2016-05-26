@@ -11,7 +11,7 @@ public enum SolveState {
 
 public class SafeCracker : MiniGame {
 	private System.Random rnd = new System.Random ();
-	private static readonly Color SafeColor = new Color (0.7f, 0.6f, 0f);
+	private static readonly Color SafeColor = new Color (0.91f, 0.78f, 0f);
 	int [] angles;
 	int [] targetAngles;
 	int [] lastClickAngles;
@@ -98,6 +98,8 @@ public class SafeCracker : MiniGame {
 	}
 
 	public override void Update () {
+		var tunables = gameFlow.GetTunables ();
+
 		if (playersReady < gameFlow.Players.Count) {
 			return;
 		}
@@ -139,11 +141,11 @@ public class SafeCracker : MiniGame {
 			// State actions
 			switch (solveState [player.PlayerNumber]) {
 				case SolveState.Searching:
-					player.LEDColor = Color.black;
+					player.LEDColor = SafeColor * tunables.ColorIntensityDuringGameplay;
 					player.Rumble = 0f;
 					break;
 				case SolveState.Found:
-					player.LEDColor = Color.black;
+					player.LEDColor = SafeColor * tunables.ColorIntensityDuringGameplay;
 					player.Rumble = 0.5f;
 					break;
 				case SolveState.Activated:
