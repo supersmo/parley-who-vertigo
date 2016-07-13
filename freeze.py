@@ -1,47 +1,40 @@
+from minimove import sfx, players
+
 FreezingBlue = color(0., 0.4, 0.9)
+off = color(0., 0., 0.)
 
 class MiniGame:
-    def status(self):
-        return 'Freeze, man!'
-
     def start(self):
-        # Set minigame-specific property on all players
+        players.p.alive = True
         players.p.ready = False
 
+        @players.each
         def intro_animation(player):
             for i in range(4):
-                sfx('CycleBlipSound') # play sound effect
-                player.color = FreezingBlue # set color of single player
-                yield 0.4 # wait for 0.4 seconds
+                sfx('CycleBlipSound')
+                player.color = FreezingBlue
+                yield 0.4
 
                 sfx('CycleBlipSound')
-                player.color = black
+                player.color = off
                 yield 0.2
 
             sfx('BeepSound')
             player.p.ready = True
 
-            # players.p.ready returns list of properties for each player
             if all(players.p.ready):
-                # Set property on all players
                 players.p.alive = True
-                # set color of all players
-                players.color = FreezingBlue
 
-        # run coroutine for each playyer
-        players.each(intro_animation)
+    def each(self, player):
+        if not all(players.p.ready):
+            return
 
-    def update(self):
-        for player in players:
-            if player.p.alive and player.is_unstable:
-                player.p.alive = False
-                player.color = black
-                sfx('BalloonExplosionSound')
+        if player.alive and player.is_unstable:
+            sfx('BalloonExplosionSound')
+            player.p.alive = False
 
-                if sum(players.p.alive) == 1:
-                    # Assign the winner property from the alive property
-                    players.p.winner = players.p.alive
-                    return end_game()
+        player.color = FreezingBlue if player.p.alive else off
 
-    def can_support(self, num_players):
-        return True
+        if sum(players.p.alive) < 2:
+            # Assign the winner property from the alive property
+            players.end_game(lambda player: player.p.alive)
