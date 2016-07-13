@@ -5,7 +5,8 @@ class MiniGame:
         return 'Freeze, man!'
 
     def start(self):
-        self.ready = 0
+        # Set minigame-specific property on all players
+        players.p.ready = False
 
         def intro_animation(player):
             for i in range(4):
@@ -18,9 +19,10 @@ class MiniGame:
                 yield 0.2
 
             sfx('BeepSound')
-            self.ready += 1
+            player.p.ready = True
 
-            if self.ready == len(players):
+            # players.p.ready returns list of properties for each player
+            if all(players.p.ready):
                 # Set property on all players
                 players.p.alive = True
                 # set color of all players
@@ -39,7 +41,7 @@ class MiniGame:
                 if sum(players.p.alive) == 1:
                     # Assign the winner property from the alive property
                     players.p.winner = players.p.alive
-                    end_game()
+                    return end_game()
 
     def can_support(self, num_players):
         return True
