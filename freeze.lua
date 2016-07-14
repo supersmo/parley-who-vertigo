@@ -17,7 +17,7 @@ end
 
 function gameplay()
     if player.alive and player.is_unstable then
-        sfx(ballon_explosion)
+        sfx(balloon_explosion)
         player.alive = false
     end
 

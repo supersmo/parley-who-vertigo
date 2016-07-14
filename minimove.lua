@@ -19,7 +19,11 @@ env = {
     -- Sound effects
     cycle_blip='CycleBlipSound',
     beep='BeepSound',
-    ballon_explosion='BalloonExplosionSound',
+    balloon_explosion='BalloonExplosionSound',
+    balloon_announce='BalloonAnnounceSound',
+    squeak='SqueakSound',
+
+    -- State
     player=nil,
 }
 
@@ -27,17 +31,46 @@ function env.wait(seconds)
     coroutine.yield(seconds)
 end
 
-function env.sfx(sound)
-    print('Would play', sound)
+function env.sfx(sound, volume)
+    print('Would play', sound, 'at volume', volume or 1.0)
 end
 
 function env.led(color)
     print('Would set color of', env.player.index, 'to', color.r, color.g, color.b)
 end
 
+ColorOperator = {
+    __mul=function (c, f)
+        return env.color(c.r*f, c.g*f, c.b*f)
+    end,
+    __div=function (c, f)
+        return env.color(c.r/f, c.g/f, c.b/f)
+    end,
+}
+
 function env.color(r, g, b)
-    return {r=r, g=g, b=b}
+    local result = {r=r, g=g, b=b}
+    setmetatable(result, ColorOperator)
+    return result
 end
+
+env.tunables = {
+    win_animation_blinks=10,
+    blink_duration_sec=0.1,
+    win_animation_color=env.color(1.0, 1.0, 1.0),
+    shake_threshold=3.5,
+    unstable_threshold=1.2,
+    shake_it_win_threshold=100,
+    default_number_of_games=10,
+    game_win_animation_fades=25,
+    game_win_animation_fade_steps=5,
+    fade_duration_sec=0.02,
+    game_win_animation_wait_before_sec=0.5,
+    game_win_animation_wait_after_sec=2,
+    color_intensity_during_gameplay=0.2,
+    attract_loop_delay_sec=0.4,
+    attract_start_delay_sec=7.0,
+}
 
 env.off = env.color(0.0, 0.0, 0.0)
 
@@ -63,14 +96,19 @@ function schedule(func)
 end
 
 function Player(index)
-    local self = {index=index, alive=true, is_unstable=false}
+    local self = {index=index, alive=true, is_unstable=true, now_shaking=true, winner=false}
+    function self:wins()
+        self.winner = true
+    end
     return self
 end
 
 function gameplay_active()
     alive_players = 0
     for _, player in pairs(players) do
-        if player.alive then
+        if player.winner then
+            return false
+        elseif player.alive then
             alive_players = alive_players + 1
         end
     end
@@ -148,3 +186,4 @@ function run_minigame(n_players, filename)
 end
 
 run_minigame(3, 'freeze.lua')
+run_minigame(3, 'shakeit.lua')
