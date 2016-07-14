@@ -1,4 +1,5 @@
 import time
+import random
 
 class Tasks(list):
     def schedule(self):
@@ -24,7 +25,6 @@ class Task:
             try:
                 wait_time = next(self.iterator)
                 self.run_after = time.time() + wait_time
-                #print('Would wait for {} seconds'.format(wait_time))
                 return True
             except StopIteration:
                 return False
@@ -44,6 +44,14 @@ class color:
 
     def __repr__(self):
         return 'color(%.2f, %.2f, %.2f)' % (self.r, self.g, self.b)
+
+    def __mul__(self, f):
+        return color(self.r * f, self.g * f, self.b * f)
+
+    __rmul__ = __mul__
+
+    def __truediv__(self, f):
+        return color(self.r / f, self.g / f, self.b / f)
 
 
 class ForEachPlayerProperty:
@@ -66,13 +74,15 @@ class PlayerList(list):
         raise Winners([player for player in self if winning_condition(player)])
 
 class PlayerProperties:
-    ...
+    def __init__(self, player):
+        self.player = player
+        self.color = None
+        self.rumble = 0
 
 class Player:
     def __init__(self, index):
         self.index = index
-        self.p = PlayerProperties()
-        self._color = None
+        self.p = PlayerProperties(self)
 
     def wins(self):
         raise Winners([self])
@@ -80,24 +90,48 @@ class Player:
     def __repr__(self):
         return '<Player {} (p={})>'.format(self.index, self.p.__dict__)
 
-    def __setattr__(self, key, value):
-        if key == 'color':
-            if self._color != value:
-                print('Would set color to {}'.format(value))
-                self._color = value
-        else:
-            super().__setattr__(key, value)
+    @property
+    def is_unstable(selF):
+        return (move.acceleration.magnitude >= tunables.unstable_threshold)
 
-    def __getattr__(self, key):
-        if key == 'is_unstable':
-            return (input('Is {} unstable? (y/n) '.format(self)) == 'y')
-        else:
-            return super().__getattr__(key)
+    @property
+    def now_shaking(self):
+        return random.choice([True, False])
+
+    @property
+    def safe_angle(self):
+        v = vec2(move.acceleration.x, move.acceleration.y).normalized()
+        result = math.atan2(v.x, v.y) * 180. / math.pi
+        if result < 0:
+            result += 360
+        return result
+
+    @property
+    def pressed(self):
+        return ['trigger']
+
+    @property
+    def pressed_colors(self):
+        return [color for button, color in button_to_color.items() if button in self.pressed]
 
 players = PlayerList([Player(i+1) for i in range(5)])
 
 class tunables:
-    ...
+    win_animation_blinks = 10
+    blink_duration_sec = 0.1
+    win_animation_color = color(1., 1., 1.)
+    shake_threshold = 3.5
+    unstable_threshold = 1.2
+    shake_it_win_threshold = 100
+    default_number_of_games = 10
+    game_win_animation_fades = 25
+    game_win_animation_fade_steps = 5
+    fade_duration_sec = 0.02
+    game_win_animation_wait_before_sec = 0.5
+    game_win_animation_wait_after_sec = 2
+    color_intensity_during_gameplay = 0.2
+    attract_loop_delay_sec = 0.4
+    attract_start_delay_sec = 7.0
 
 magenta = color(1., 0., 1.)
 green = color(0., 1., 0.)

@@ -1,22 +1,25 @@
-from minimove import tasks, players, sounds
+from minimove import tasks, players, sounds, Winners
 
-from freeze import MiniGame
+#from shakeit import MiniGame
+#from freeze import MiniGame
+#from safecracker import MiniGame
+from movesays import MiniGame
 
-class GameRunner:
-    def __init__(self, game):
-        self.game = game
+def run_game(game):
+    game.start()
 
-    def run(self):
-        self.game.start()
+    @players.each
+    def run_each(player):
+        while True:
+            game.each(player)
+            yield 1. / 60.
 
-        @players.each
-        def run_each(player):
-            while hasattr(self.game, 'each'):
-                self.game.each(player)
-                yield 1. / 60.
+    while tasks:
+        tasks.schedule()
+        sounds.play()
+        print(', '.join(repr((player.p.color, player.p.rumble)) for player in players), end='\r')
 
-        while tasks:
-            tasks.schedule()
-            sounds.play()
-
-GameRunner(MiniGame()).run()
+try:
+    run_game(MiniGame())
+except Winners as winners:
+    print('Winners: {}'.format(winners.winners))

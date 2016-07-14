@@ -1,4 +1,6 @@
-from minimove import sfx, players, tunables
+from minimove import sfx, players, tunables, color
+
+import random
 
 SafeColor = color(0.91, 0.78, 0.)
 
@@ -21,20 +23,14 @@ class MiniGame:
 
         @players.each
         def intro_animation(player):
-            player.color = SafeColor * 0.2
-            player.rumble = 0.6
+            player.p.color = SafeColor * 0.2
+            player.p.rumble = 0.6
             yield 0.4
-
-            player.color = SafeColor
-            player.rumble = 0.
+            player.p.color = SafeColor
+            player.p.rumble = 0.
             yield 0.5
-
-            player.color = None
+            player.p.color = None
             yield 0.4
-
-            for i in range(20):
-                player.color = PumpingColor * i / 19.
-                yield 0.1
 
             player.p.ready = True
 
@@ -68,26 +64,26 @@ class MiniGame:
                    player.p.angle <= player.p.target_angle + threshold)
 
         if player.p.solve_state == SolveState.Searching:
-            if is_near and not player.pressed.trigger:
+            if is_near and 'trigger' not in player.pressed:
                 player.p.solve_state = SolveState.Found
         elif player.p.solve_state == SolveState.Found:
             if is_near:
                 player.p.solve_state = SolveState.Searching
-            elif player.pressed.trigger:
+            elif 'trigger' in player.pressed:
                 player.p.solve_state = SolveState.Activated
         elif player.p.solve_state == SolveState.Activated:
             player.schedule(self.reset_search(player, 0.2))
             player.p.solve_state = SolveState.Afterglow
 
         if player.p.solve_state == SolveState.Searching:
-            player.color = SafeColor * tunables.color_intensity_during_gameplay
-            player.rumble = 0.
+            player.p.color = SafeColor * tunables.color_intensity_during_gameplay
+            player.p.rumble = 0.
         elif player.p.solve_state == SolveState.Found:
-            player.color = SafeColor * tunables.color_intensity_during_gameplay
-            player.rumble = 0.5
+            player.p.color = SafeColor * tunables.color_intensity_during_gameplay
+            player.p.rumble = 0.5
         elif player.p.solve_state == SolveState.Activated:
-            player.color = SafeColor
-            player.rumble = 0.5
-        elif player.p.solve_state = SolveState.Afterglow:
-            player.color = SafeColor
-            player.rumble = 1.
+            player.p.color = SafeColor
+            player.p.rumble = 0.5
+        elif player.p.solve_state == SolveState.Afterglow:
+            player.p.color = SafeColor
+            player.p.rumble = 1.

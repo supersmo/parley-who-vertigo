@@ -11,15 +11,15 @@ class MiniGame:
         def intro_animation(player):
             for i in range(4):
                 sfx('CycleBlipSound')
-                player.color = FreezingBlue
+                player.p.color = FreezingBlue
                 yield 0.4
 
                 sfx('CycleBlipSound')
-                player.color = None
+                player.p.color = None
                 yield 0.2
 
             sfx('BeepSound')
-            player.color = FreezingBlue
+            player.p.color = FreezingBlue
             player.p.ready = True
 
             if all(players.p.ready):
@@ -33,7 +33,7 @@ class MiniGame:
             sfx('BalloonExplosionSound')
             player.p.alive = False
 
-        player.color = FreezingBlue if player.p.alive else None
+        player.p.color = FreezingBlue if player.p.alive else None
 
         if sum(players.p.alive) < 2:
             players.end_game(lambda player: player.p.alive)
