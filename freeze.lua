@@ -16,10 +16,10 @@ function intro()
 end
 
 function gameplay()
-    if alive and is_unstable then
+    if player.alive and player.is_unstable then
         sfx(ballon_explosion)
-        alive = false
+        player.alive = false
     end
 
-    led(alive and freezing_blue or off)
+    led(player.alive and freezing_blue or off)
 end
