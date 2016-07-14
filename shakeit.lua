@@ -8,19 +8,20 @@ function intro()
         led(pumping_color * (21 - i) / 20)
         wait(0.1)
     end
+
+    led(off)
 end
 
 function gameplay()
-    if player.now_shaking then
+    if player.now_shaking and not player.winner then
         player.counter = player.counter + 1
-        if player.counter == tunables.shake_it_win_threshold then
-            sfx(balloon_explosion)
-            player:wins()
+        intensity = player.counter / tunables.shake_it_win_threshold
+        led(pumping_color, intensity)
+
+        if intensity == 1 then
+            sfx(balloon_explosion) player:wins()
         elseif player.counter % 7 == 0 then
-            sfx(squeak, player.counter / tunables.shake_it_win_threshold)
+            sfx(squeak, intensity)
         end
     end
-
-    base = tunables.color_intensity_during_gameplay
-    led(pumping_color * (base + (1 - base) * (player.counter / tunables.shake_it_win_threshold)))
 end

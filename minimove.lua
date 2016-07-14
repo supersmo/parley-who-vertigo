@@ -35,7 +35,13 @@ function env.sfx(sound, volume)
     print('Would play', sound, 'at volume', volume or 1.0)
 end
 
-function env.led(color)
+function env.led(color, intensity)
+    -- color: the color to set to; intensity: the intensity during gameplay (optional)
+    if intensity then
+        base = env.tunables.color_intensity_during_gameplay
+        color = color * (base + (1 - base) * intensity)
+    end
+
     print('Would set color of', env.player.index, 'to', color.r, color.g, color.b)
 end
 
