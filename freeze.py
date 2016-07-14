@@ -1,7 +1,6 @@
-from minimove import sfx, players
+from minimove import sfx, players, color
 
 FreezingBlue = color(0., 0.4, 0.9)
-off = color(0., 0., 0.)
 
 class MiniGame:
     def start(self):
@@ -16,10 +15,11 @@ class MiniGame:
                 yield 0.4
 
                 sfx('CycleBlipSound')
-                player.color = off
+                player.color = None
                 yield 0.2
 
             sfx('BeepSound')
+            player.color = FreezingBlue
             player.p.ready = True
 
             if all(players.p.ready):
@@ -29,12 +29,11 @@ class MiniGame:
         if not all(players.p.ready):
             return
 
-        if player.alive and player.is_unstable:
+        if player.p.alive and player.is_unstable:
             sfx('BalloonExplosionSound')
             player.p.alive = False
 
-        player.color = FreezingBlue if player.p.alive else off
+        player.color = FreezingBlue if player.p.alive else None
 
         if sum(players.p.alive) < 2:
-            # Assign the winner property from the alive property
             players.end_game(lambda player: player.p.alive)
