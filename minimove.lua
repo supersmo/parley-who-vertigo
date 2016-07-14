@@ -25,6 +25,7 @@ env = {
 
     -- State
     player=nil,
+    is_gameplay=false,
 }
 
 function env.wait(seconds)
@@ -36,9 +37,9 @@ function env.sfx(sound, volume)
 end
 
 function env.led(color, intensity)
-    -- color: the color to set to; intensity: the intensity during gameplay (optional)
+    -- color: the color to set to; intensity: the intensity of the color
     if intensity then
-        base = env.tunables.color_intensity_during_gameplay
+        base = env.is_gameplay and env.tunables.color_intensity_during_gameplay or 0
         color = color * (base + (1 - base) * intensity)
     end
 
@@ -190,7 +191,9 @@ function run_minigame(n_players, filename)
     constructor()
     print(dump(env))
 
+    env.is_gameplay = false
     schedule(parallel_each_runner(env.intro))
+    env.is_gameplay = true
     schedule(parallel_each_runner(loop_runner(env.gameplay)))
 end
 
