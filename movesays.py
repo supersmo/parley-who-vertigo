@@ -4,7 +4,6 @@ import random
 class MiniGame:
     def start(self):
         players.p.alive = True
-        sfx('BalloonAnnounceSound')
 
     def intro(self, player):
         for i in range(10):
