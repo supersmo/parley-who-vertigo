@@ -1,4 +1,4 @@
-from minimove import sfx, players, tunables, button_colors
+from minimove import sfx, players, button_colors
 import random
 
 class MiniGame:
@@ -11,13 +11,13 @@ class MiniGame:
         @players.each
         def intro_animation(player):
             for i in range(10):
+                sfx('CycleBlipSound')
                 player.color = random.choice(button_colors)
                 yield 0.1
-                sfx('CycleBlipSound')
 
+                sfx('CycleBlipSound')
                 player.color = None
                 yield 0.1
-                sfx('CycleBlipSound')
 
             player.p.ready = True
 

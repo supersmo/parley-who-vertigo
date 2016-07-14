@@ -74,6 +74,9 @@ class Player:
         self.p = PlayerProperties()
         self._color = None
 
+    def wins(self):
+        raise Winners([self])
+
     def __repr__(self):
         return '<Player {} (p={})>'.format(self.index, self.p.__dict__)
 
