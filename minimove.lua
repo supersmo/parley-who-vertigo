@@ -199,3 +199,4 @@ end
 
 run_minigame(3, 'freeze.lua')
 run_minigame(3, 'shakeit.lua')
+run_minigame(3, 'movesays.lua')
