@@ -100,6 +100,9 @@ function Player(index)
     function self:wins()
         self.winner = true
     end
+    function self:dies()
+        self.alive = false
+    end
     return self
 end
 

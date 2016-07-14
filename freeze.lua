@@ -11,7 +11,7 @@ end
 
 function gameplay()
     if player.alive and player.is_unstable then
-        sfx(balloon_explosion) player.alive = false
+        sfx(balloon_explosion) player:dies()
     end
 
     led(player.alive and freezing_blue or off)
