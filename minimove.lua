@@ -11,6 +11,8 @@ function dump(o)
     end
 end
 
+math.randomseed(os.time())
+
 env = {
     -- For debugging
     print=print,
@@ -28,15 +30,15 @@ env = {
     is_gameplay=false,
 }
 
-function env.wait(seconds)
+function wait(seconds)
     coroutine.yield(seconds)
 end
 
-function env.sfx(sound, volume)
+function sfx(sound, volume)
     print('Would play', sound, 'at volume', volume or 1.0)
 end
 
-function env.led(color, intensity)
+function led(color, intensity)
     -- color: the color to set to; intensity: the intensity of the color
     if intensity then
         base = env.is_gameplay and env.tunables.color_intensity_during_gameplay or 0
@@ -44,27 +46,53 @@ function env.led(color, intensity)
     end
 
     print('Would set color of', env.player.index, 'to', color.r, color.g, color.b)
+    env.player.color = color
 end
 
-ColorOperator = {
-    __mul=function (c, f)
-        return env.color(c.r*f, c.g*f, c.b*f)
-    end,
-    __div=function (c, f)
-        return env.color(c.r/f, c.g/f, c.b/f)
-    end,
+function random(choices)
+    i = 0
+    for _, _ in pairs(choices) do
+        i = i + 1
+    end
+    return choices[math.random(i)]
+end
+
+color_op = {
+    __mul=function (c, f) return color(c.r*f, c.g*f, c.b*f) end,
+    __div=function (c, f) return color(c.r/f, c.g/f, c.b/f) end,
+    __eq=function (a, b) return a.r == b.r and a.g == b.g and a.b == b.b end,
 }
 
-function env.color(r, g, b)
+function color(r, g, b)
     local result = {r=r, g=g, b=b}
-    setmetatable(result, ColorOperator)
+    setmetatable(result, color_op)
     return result
 end
+
+magenta = color(1., 0., 1.)
+green = color(0., 1., 0.)
+blue = color(0., 0., 1.)
+red = color(1., 0., 0.)
+
+env.sfx = sfx
+env.led = led
+env.random = random
+env.color = color
+env.wait = wait
+
+env.button_colors = { magenta, green, blue, red }
+
+env.button_to_color = {
+    square=magenta,
+    triangle=green,
+    cross=blue,
+    circle=red,
+}
 
 env.tunables = {
     win_animation_blinks=10,
     blink_duration_sec=0.1,
-    win_animation_color=env.color(1.0, 1.0, 1.0),
+    win_animation_color=color(1.0, 1.0, 1.0),
     shake_threshold=3.5,
     unstable_threshold=1.2,
     shake_it_win_threshold=100,
@@ -79,7 +107,8 @@ env.tunables = {
     attract_start_delay_sec=7.0,
 }
 
-env.off = env.color(0.0, 0.0, 0.0)
+off = color(0.0, 0.0, 0.0)
+env.off = off
 
 function now()
     return os.clock()
@@ -103,7 +132,7 @@ function schedule(func)
 end
 
 function Player(index)
-    local self = {index=index, alive=true, is_unstable=true, now_shaking=true, winner=false}
+    local self = {index=index, color=off, alive=true, is_unstable=true, now_shaking=true, winner=false, pressed_color=nil}
     function self:wins()
         self.winner = true
     end
@@ -166,7 +195,7 @@ function parallel_each_runner(func)
                 end
             end
             if wait_time then
-                env.wait(wait_time)
+                wait(wait_time)
             end
         until not wait_time
     end
@@ -176,7 +205,7 @@ function loop_runner(func)
     return function ()
         while gameplay_active() do
             func()
-            env.wait(1 / 60)
+            wait(1 / 60)
         end
     end
 end
