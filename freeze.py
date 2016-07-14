@@ -2,29 +2,25 @@ from minimove import sfx, players, color
 
 FreezingBlue = color(0., 0.4, 0.9)
 
-class MiniGame:
-    def start(self):
-        players.p.alive = True
+def intro():
+    for i in range(4):
+        sfx('CycleBlipSound')
+        color(FreezingBlue)
+        yield 0.4
 
-    def intro(self, player):
-        for i in range(4):
-            sfx('CycleBlipSound')
-            player.p.color = FreezingBlue
-            yield 0.4
+        sfx('CycleBlipSound')
+        off()
+        yield 0.2
 
-            sfx('CycleBlipSound')
-            player.p.color = None
-            yield 0.2
+    sfx('BeepSound')
+    color(FreezingBlue)
 
-        sfx('BeepSound')
-        player.p.color = FreezingBlue
+def gameplay():
+    if alive and is_unstable:
+        sfx('BalloonExplosionSound')
+        dead()
 
-    def each(self, player):
-        if player.p.alive and player.is_unstable:
-            sfx('BalloonExplosionSound')
-            player.p.alive = False
+    color(FreezingBlue if alive else None)
 
-        player.p.color = FreezingBlue if player.p.alive else None
-
-        if sum(players.p.alive) < 2:
-            players.win(players.p.alive)
+def end():
+    return n_alive < 2
