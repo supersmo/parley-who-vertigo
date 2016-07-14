@@ -73,6 +73,9 @@ class PlayerList(list):
     def end_game(self, winning_condition):
         raise Winners([player for player in self if winning_condition(player)])
 
+    def lose(self):
+        self.end_game(lambda player: False)
+
 class PlayerProperties:
     def __init__(self, player):
         self.player = player
@@ -89,6 +92,9 @@ class Player:
 
     def __repr__(self):
         return '<Player {} (p={})>'.format(self.index, self.p.__dict__)
+
+    def schedule(self, iterable):
+        tasks.append(Task(iterable))
 
     @property
     def is_unstable(selF):

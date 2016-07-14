@@ -5,25 +5,16 @@ PumpingColor = color(0., 1., 0.)
 class MiniGame:
     def start(self):
         players.p.counter = 0
-        players.p.ready = False
+        players.p.alive = True
 
         sfx('BalloonAnnounceSound')
 
-        @players.each
-        def intro_animation(player):
-            for i in range(20):
-                player.p.color = PumpingColor * i / 19.
-                yield 0.1
-
-            player.p.ready = True
-
-            if all(players.p.ready):
-                players.p.alive = True
+    def intro(self, player):
+        for i in range(20):
+            player.p.color = PumpingColor * i / 19.
+            yield 0.1
 
     def each(self, player):
-        if not all(players.p.ready):
-            return
-
         if player.now_shaking:
             player.p.counter += 1
             if player.p.counter == tunables.shake_it_win_threshold:

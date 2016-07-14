@@ -5,30 +5,21 @@ FreezingBlue = color(0., 0.4, 0.9)
 class MiniGame:
     def start(self):
         players.p.alive = True
-        players.p.ready = False
 
-        @players.each
-        def intro_animation(player):
-            for i in range(4):
-                sfx('CycleBlipSound')
-                player.p.color = FreezingBlue
-                yield 0.4
-
-                sfx('CycleBlipSound')
-                player.p.color = None
-                yield 0.2
-
-            sfx('BeepSound')
+    def intro(self, player):
+        for i in range(4):
+            sfx('CycleBlipSound')
             player.p.color = FreezingBlue
-            player.p.ready = True
+            yield 0.4
 
-            if all(players.p.ready):
-                players.p.alive = True
+            sfx('CycleBlipSound')
+            player.p.color = None
+            yield 0.2
+
+        sfx('BeepSound')
+        player.p.color = FreezingBlue
 
     def each(self, player):
-        if not all(players.p.ready):
-            return
-
         if player.p.alive and player.is_unstable:
             sfx('BalloonExplosionSound')
             player.p.alive = False

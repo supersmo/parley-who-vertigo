@@ -8,10 +8,17 @@ from movesays import MiniGame
 def run_game(game):
     game.start()
 
+    players.p.ready = False
+    @players.each
+    def run_intro(player):
+        yield from game.intro(player)
+        player.p.ready = True
+
     @players.each
     def run_each(player):
         while True:
-            game.each(player)
+            if all(players.p.ready):
+                game.each(player)
             yield 1. / 60.
 
     while tasks:

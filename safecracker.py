@@ -17,41 +17,26 @@ def randomize_target_angle(player):
 
 class MiniGame:
     def start(self):
-        players.p.ready = False
-
+        players.p.angle = 0.
+        players.p.last_click_angle = 0.
+        players.p.solved_locks = 0
         sfx('SafeAnnounceSound')
 
-        @players.each
-        def intro_animation(player):
-            player.p.color = SafeColor * 0.2
-            player.p.rumble = 0.6
-            yield 0.4
-            player.p.color = SafeColor
-            player.p.rumble = 0.
-            yield 0.5
-            player.p.color = None
-            yield 0.4
+    def intro(self, player):
+        player.p.color = SafeColor * 0.2
+        player.p.rumble = 0.6
+        yield 0.4
 
-            player.p.ready = True
+        player.p.color = SafeColor
+        player.p.rumble = 0.
+        yield 0.5
 
-            if all(players.p.ready):
-                for player in players:
-                    player.p.angle = 0.
-                    player.p.last_click_angle = 0.
-                    player.p.solved_locks = 0.
-                    randomize_target_angle(player)
+        player.p.color = None
+        yield 0.4
 
-    def reset_search(self, player, delay):
-        yield delay
-        player.p.solved_locks += 1
-        if player.p.solved_locks == number_of_locks:
-            player.wins()
         randomize_target_angle(player)
 
     def each(self, player):
-        if not all(players.p.ready):
-            return
-
         new_angle = player.safe_angle
 
         if abs(new_angle - player.p.last_click_angle) > 20.:
@@ -72,7 +57,14 @@ class MiniGame:
             elif 'trigger' in player.pressed:
                 player.p.solve_state = SolveState.Activated
         elif player.p.solve_state == SolveState.Activated:
-            player.schedule(self.reset_search(player, 0.2))
+            @player.schedule
+            def reset_search():
+                yield 0.2
+                player.p.solved_locks += 1
+                if player.p.solved_locks == number_of_locks:
+                    player.wins()
+        randomize_target_angle(player)
+
             player.p.solve_state = SolveState.Afterglow
 
         if player.p.solve_state == SolveState.Searching:
