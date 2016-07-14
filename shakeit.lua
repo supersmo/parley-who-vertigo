@@ -1,16 +1,11 @@
 pumping_color = color(0.0, 1.0, 0.0)
 
 function intro()
-    player.counter = 0
     sfx(balloon_announce)
-
-    steps = 20 duration = 2
-    for intensity=0,1,1/steps do
-        led(pumping_color, 1 - intensity)
-        wait(duration / steps)
+    for intensity=1,0,-0.05 do
+        led(pumping_color, intensity) wait(0.1)
     end
-
-    led(off)
+    led(off) player.counter = 0
 end
 
 function gameplay()
