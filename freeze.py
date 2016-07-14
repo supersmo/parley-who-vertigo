@@ -27,4 +27,4 @@ class MiniGame:
         player.p.color = FreezingBlue if player.p.alive else None
 
         if sum(players.p.alive) < 2:
-            players.end_game(lambda player: player.p.alive)
+            players.win(players.p.alive)

@@ -3,7 +3,7 @@ import random
 
 class MiniGame:
     def start(self):
-        players.p.active = True
+        players.p.alive = True
         sfx('BalloonAnnounceSound')
 
     def intro(self, player):
@@ -20,12 +20,12 @@ class MiniGame:
 
     def each(self, player):
         if player.pressed_colors:
-            if player.p.active and player.p.color in player.pressed_colors:
+            if player.p.alive and player.p.color in player.pressed_colors:
                 sfx('BeepSound', 0.5)
                 player.wins()
             else:
                 player.p.color = None
-                player.p.active = False
+                player.p.alive = False
 
-        if not any(players.p.active):
+        if not any(players.p.alive):
             players.lose()

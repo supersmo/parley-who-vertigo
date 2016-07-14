@@ -6,7 +6,6 @@ class MiniGame:
     def start(self):
         players.p.counter = 0
         players.p.alive = True
-
         sfx('BalloonAnnounceSound')
 
     def intro(self, player):
@@ -19,7 +18,6 @@ class MiniGame:
             player.p.counter += 1
             if player.p.counter == tunables.shake_it_win_threshold:
                 sfx('BalloonExplosionSound')
-                player.p.rumble = 1.
                 player.wins()
             elif player.p.counter % 7 == 0:
                 sfx('SqueakSound', player.p.counter / 100.)

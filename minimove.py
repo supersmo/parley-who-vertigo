@@ -3,7 +3,7 @@ import random
 
 class Tasks(list):
     def schedule(self):
-        time.sleep(max(task.wait_time for task in self))
+        time.sleep(min(task.wait_time for task in self))
 
         for task in list(self):
             if not task.schedule():
@@ -70,11 +70,15 @@ class PlayerList(list):
     def each(self, func):
         tasks.extend(Task(func(player)) for player in self)
 
-    def end_game(self, winning_condition):
-        raise Winners([player for player in self if winning_condition(player)])
+    def win(self, winning):
+        raise Winners([player for player, is_winning in zip(self, winning) if is_winning])
+
+    def update(self):
+        for player in self:
+            print('Would set {} to color={} and rumble={}'.format(player, player.p.color, player.p.rumble))
 
     def lose(self):
-        self.end_game(lambda player: False)
+        raise Winners([])
 
 class PlayerProperties:
     def __init__(self, player):
@@ -97,7 +101,7 @@ class Player:
         tasks.append(Task(iterable))
 
     @property
-    def is_unstable(selF):
+    def is_unstable(self):
         return (move.acceleration.magnitude >= tunables.unstable_threshold)
 
     @property

@@ -1,14 +1,15 @@
 from minimove import tasks, players, sounds, Winners
 
-#from shakeit import MiniGame
-#from freeze import MiniGame
-#from safecracker import MiniGame
-from movesays import MiniGame
+from shakeit import MiniGame as ShakeItMiniGame
+from freeze import MiniGame as FreezeMiniGame
+from safecracker import MiniGame as SafeCrackerMiniGame
+from movesays import MiniGame as MoveSaysMiniGame
 
 def run_game(game):
+    players.p.ready = False
+
     game.start()
 
-    players.p.ready = False
     @players.each
     def run_intro(player):
         yield from game.intro(player)
@@ -22,11 +23,11 @@ def run_game(game):
             yield 1. / 60.
 
     while tasks:
+        players.update()
         tasks.schedule()
         sounds.play()
-        print(', '.join(repr((player.p.color, player.p.rumble)) for player in players), end='\r')
 
 try:
-    run_game(MiniGame())
+    run_game(ShakeItMiniGame())
 except Winners as winners:
     print('Winners: {}'.format(winners.winners))
