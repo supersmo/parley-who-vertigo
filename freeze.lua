@@ -1,26 +1,25 @@
-FreezingBlue = color(0.0, 0.4, 0.9)
-Off = color(0.0, 0.0, 0.0)
+freezing_blue = color(0.0, 0.4, 0.9)
 
 function intro()
     for i=1,4 do
-        sfx('CycleBlipSound')
-        led(FreezingBlue)
+        sfx(cycle_blip)
+        led(freezing_blue)
         wait(0.4)
 
-        sfx('CycleBlipSound')
-        led(Off)
+        sfx(cycle_blip)
+        led(off)
         wait(0.2)
     end
 
-    sfx('BeepSound')
+    sfx(beep)
     color(FreezingBlue)
 end
 
 function gameplay()
     if alive and is_unstable then
-        sfx('BalloonExplosionSound')
+        sfx(ballon_explosion)
         alive = false
     end
 
-    color(alive and FreezingBlue or Off)
+    led(alive and freezing_blue or off)
 end
