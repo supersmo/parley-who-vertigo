@@ -46,7 +46,7 @@ class MainScript(object):
         }[sound]
 
         if filename not in self.sounds:
-            self.sounds[filename] = simpleaudio.WaveObject.from_wave_file(os.path.join('sounds', filename))
+            self.sounds[filename] = simpleaudio.WaveObject.from_wave_file(os.path.join(os.path.dirname(__file__), 'sounds', filename))
 
         return self.sounds[filename].play()
 
