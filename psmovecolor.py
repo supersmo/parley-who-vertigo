@@ -1,13 +1,14 @@
 import random
 import psmoveapi
-import color
+
+from color import Color
 
 class PSMoveColor(object):
     BUTTON_TO_COLOR = {
-        psmoveapi.Button.SQUARE: color.Color.MAGENTA,
-        psmoveapi.Button.TRIANGLE: color.Color.GREEN,
-        psmoveapi.Button.CROSS: color.Color.BLUE,
-        psmoveapi.Button.CIRCLE: color.Color.RED,
+        psmoveapi.Button.SQUARE: Color.MAGENTA,
+        psmoveapi.Button.TRIANGLE: Color.GREEN,
+        psmoveapi.Button.CROSS: Color.BLUE,
+        psmoveapi.Button.CIRCLE: Color.RED,
     }
 
     COLORS = list(BUTTON_TO_COLOR.values())

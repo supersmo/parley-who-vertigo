@@ -1,10 +1,10 @@
-import color
+from color import Color
 
 class TunableVariables(object):
     # Number of blinks when the winning animation runs
     WinAnimationBlinks = 10
     BlinkDurationSec = 0.1
-    WinAnimationColor = color.Color.WHITE
+    WinAnimationColor = Color.WHITE
 
     # Accelerometer magnitude threshold to detect "shaking"
     ShakeThreshold = 3.5

@@ -1,8 +1,9 @@
 import minigame
 import random
-import color
 import moveplayer
 import coroutine
+
+from color import Color
 
 
 class SolveState(object):
@@ -10,7 +11,7 @@ class SolveState(object):
 
 
 class SafeCracker(minigame.MiniGame):
-    SAFE_COLOR = color.Color(0.91, 0.78, 0.0)
+    SAFE_COLOR = Color(0.91, 0.78, 0.0)
 
     def __init__(self, gameflow):
         super().__init__(gameflow)
@@ -40,15 +41,15 @@ class SafeCracker(minigame.MiniGame):
                 self.solved_locks = [0 for player in self.gameflow.players]
                 self.solve_state = [SolveState.Searching for player in self.gameflow.players]
 
-            self.gameflow.play_sound('SafeAnnounceSound')
+        self.gameflow.play_sound('SafeAnnounceSound')
 
-            for player in self.gameflow.players:
-                parts = []
-                parts.append(moveplayer.AnimationPart(self.SAFE_COLOR * 0.2, 0.4, 0.6))
-                parts.append(moveplayer.AnimationPart(self.SAFE_COLOR, 0.5, 0.7))
-                parts.append(moveplayer.AnimationPart(color.Color.BLACK, 0.4))
+        for player in self.gameflow.players:
+            parts = []
+            parts.append(moveplayer.AnimationPart(self.SAFE_COLOR * 0.2, 0.4, 0.6))
+            parts.append(moveplayer.AnimationPart(self.SAFE_COLOR, 0.5, 0.7))
+            parts.append(moveplayer.AnimationPart(Color.BLACK, 0.4))
 
-                self.gameflow.start_coroutine(player.sphere_color_animation(parts, on_intro_blinking_finished))
+            self.gameflow.start_coroutine(player.sphere_color_animation(parts, on_intro_blinking_finished))
 
     def reset_search(self, player, delay):
         yield coroutine.WaitForSeconds(delay)

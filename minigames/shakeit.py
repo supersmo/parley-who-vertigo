@@ -1,9 +1,10 @@
 import minigame
-import color
 import moveplayer
 
+from color import Color
+
 class ShakeIt(minigame.MiniGame):
-    PUMPING_COLOR = color.Color.GREEN
+    PUMPING_COLOR = Color.GREEN
 
     def __init__(self, gameflow):
         super().__init__(gameflow)
@@ -56,6 +57,6 @@ class ShakeIt(minigame.MiniGame):
 
             player.led_color = self.PUMPING_COLOR * (base_intensity + (1.0 - base_intensity) * intensity)
 
-            if counters[player.player_number] >= tunables.ShakeItWinThreshold:
+            if self.counters[player.player_number] >= tunables.ShakeItWinThreshold:
                 self.gameflow.end_current_game(player)
                 break

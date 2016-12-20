@@ -1,7 +1,8 @@
 import minigame
 import psmovecolor
-import color
 import moveplayer
+
+from color import Color
 
 class MoveSays(minigame.MiniGame):
     def __init__(self, gameflow):
@@ -24,7 +25,7 @@ class MoveSays(minigame.MiniGame):
             parts = []
             for i in range(10):
                 parts.append(moveplayer.AnimationPart(psmovecolor.PSMoveColor.get_random_color(), 0.1))
-                parts.append(moveplayer.AnimationPart(color.Color.BLACK, 0.1))
+                parts.append(moveplayer.AnimationPart(Color.BLACK, 0.1))
 
             def on_changed():
                 self.gameflow.play_sound('CycleBlipSound')
@@ -43,7 +44,7 @@ class MoveSays(minigame.MiniGame):
             else:
                 self.gameflow.play_sound('BadBeepSound', 0.5)
                 # TODO: Play "dead" animation
-                player.led_color = color.Color.BLACK
+                player.led_color = Color.BLACK
                 self.players_remaining -= 1
                 if self.players_remaining == 0:
                     self.gameflow.end_current_game_no_winner()

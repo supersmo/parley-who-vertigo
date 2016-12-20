@@ -1,9 +1,10 @@
 import minigame
-import color
 import time
 
+from color import Color
+
 class AttractMode(minigame.MiniGame):
-    READY_COLOR = color.Color(0.4, 0.9, 0.0)
+    READY_COLOR = Color(0.4, 0.9, 0.0)
 
     def __init__(self, gameflow):
         super().__init__(gameflow)
@@ -44,9 +45,9 @@ class AttractMode(minigame.MiniGame):
         self.accumulator += (now - self.last_update)
         self.last_update = now
         while self.accumulator > tunables.AttractLoopDelaySec and tunables.AttractLoopDelaySec > 0.001:
-            intensities[self.ticks % len(self.intensities)] = 1.0
+            self.intensities[self.ticks % len(self.intensities)] = 1.0
             self.ticks += 1
-            self.accumulator -= self.tunables.AttractLoopDelaySec
+            self.accumulator -= tunables.AttractLoopDelaySec
 
         if self.everyone_ready:
             # Check if we're ready already

@@ -1,7 +1,9 @@
-import color
 import coroutine
 import psmoveapi
 import math
+import psmovecolor
+
+from color import Color
 
 
 class Vec2(object):
@@ -23,24 +25,20 @@ class AnimationPart(object):
 
 
 class MovePlayer(object):
-    def __init__(self, player_number):
+    def __init__(self, player_number, controller):
         self.player_number = player_number
-        self.led_color = color.Color.WHITE
+        self.controller = controller
+        self.led_color = Color.BLACK
         self.rumble = 0.0
         self.score = 0
-        self.acceleration = psmoveapi.Vec3(0.0, 0.0, 0.0)
-        self.trigger_pressed = False
-        self.move_pressed = False
+
+    @property
+    def acceleration(self):
+        return self.controller.accelerometer
 
     def update(self):
-        # TODO: Actually update those values from the controller
-        self.acceleration = psmoveapi.Vec3(0.0, 0.0, 0.0)
-        self.trigger_pressed = False
-        self.move_pressed = False
-
-    def valid(self):
-        # TODO return move.ConnectionType == PSMoveConnectionType.Bluetooth
-        return True
+        self.controller.color = self.led_color
+        self.controller.rumble = self.rumble
 
     def sphere_color_animation(self, parts, on_finished, on_changed=None):
         for part in parts:
@@ -56,18 +54,18 @@ class MovePlayer(object):
         parts = []
         for i in range(tunables.WinAnimationBlinks):
             parts.append(AnimationPart(tunables.WinAnimationColor, tunables.BlinkDurationSec))
-            parts.append(AnimationPart(color.Color.BLACK, tunables.BlinkDurationSec))
+            parts.append(AnimationPart(Color.BLACK, tunables.BlinkDurationSec))
 
-        return SphereColorAnimation(parts, on_finished)
+        return self.sphere_color_animation(parts, on_finished)
 
     def game_win_animation(self, tunables, on_finished):
         parts = []
-        parts.append(AnimationPart(color.Color.BLACK, tunables.GameWinAnimationWaitBeforeSec))
+        parts.append(AnimationPart(Color.BLACK, tunables.GameWinAnimationWaitBeforeSec))
 
-        current_color = color.Color.WHITE
+        current_color = Color.WHITE
         for i in range(tunables.GameWinAnimationFades):
             next_color = (psmovecolor.PSMoveColor.get_random_color()
-                          if current_color == color.Color.WHITE else color.Color.WHITE)
+                          if current_color == Color.WHITE else Color.WHITE)
             jmax = tunables.GameWinAnimationFadeSteps
             for j in range(jmax):
                 alpha = float(j) / float(jmax - 1.0)
@@ -75,15 +73,15 @@ class MovePlayer(object):
                 parts.append(AnimationPart(mixed, tunables.FadeDurationSec))
             current_color = next_color
 
-        parts.append(AnimationPart(color.Color.BLACK, tunables.GameWinAnimationWaitAfterSec))
+        parts.append(AnimationPart(Color.BLACK, tunables.GameWinAnimationWaitAfterSec))
 
         return self.sphere_color_animation(parts, on_finished)
 
     def now_shaking(self, tunables):
-        return self.acceleration_magnitude >= tunables.ShakeThreshold
+        return self.controller.accelerometer.length() >= tunables.ShakeThreshold
 
     def is_unstable(self, tunables):
-        return self.acceleration_magnitude >= tunables.UnstableThreshold
+        return self.controller.accelerometer.length() >= tunables.UnstableThreshold
 
     def safe_angle(self):
         v = Vec2(self.acceleration.x, self.acceleration.y)
@@ -94,7 +92,10 @@ class MovePlayer(object):
         return result
 
     def is_trigger_pressed(self):
-        return self.trigger_pressed
+        return self.controller.still_pressed(psmoveapi.Button.T)
 
     def is_move_pressed(self):
-        return self.move_pressed
+        return self.controller.still_pressed(psmoveapi.Button.MOVE)
+
+    def is_button_down(self, button):
+        return self.controller.still_pressed(button)

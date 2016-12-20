@@ -1,16 +1,16 @@
 import psmoveapi
 import moveplayer
 import coroutine
-import color
 import tunablevariables
 
 import random
 
+from color import Color
 
-from minigame import attractmode
-from minigame import movesays
-from minigame import shakeit
-from minigame import safecracker
+from minigames import attractmode
+from minigames import movesays
+from minigames import shakeit
+from minigames import safecracker
 
 
 class Counter(object):
@@ -26,17 +26,11 @@ class Counter(object):
 
 
 class GameFlow(object):
-    def __init__(self):
-        count = psmoveapi.get_num_connected()  # TODO
+    def __init__(self, main_script):
+        self.main_script = main_script
 
-        self.players = []
-
-        player = 0
-        for i in range(count):
-            mp = moveplayer.MovePlayer(player)
-            if mp.valid():
-                player += 1
-                self.players.append(mp)
+        self.players = [moveplayer.MovePlayer(index, controller)
+                        for index, controller in enumerate(self.main_script.get_controllers())]
 
         self.current_game = None
         self.remaining_games = 0
@@ -67,7 +61,7 @@ class GameFlow(object):
 
         max_score = 0
         for player in self.players:
-            player.led_color = color.Color.BLACK
+            player.led_color = Color.BLACK
             player.rumble = 0.0
             max_score = max(max_score, player.score)
 
@@ -98,22 +92,22 @@ class GameFlow(object):
                 games.append(safecracker.SafeCracker(self))
 
             self.current_game = random.choice(games)
+            print('Current game:', self.current_game)
             self.current_game.start_game()
             self.remaining_games -= 1
 
     def update_controllers(self):
         for player in self.players:
-             # Geht L2, L1, R1, ... (alle PSMoveButton-Werte) durch
-             for button in psmoveapi.Button.values():
-                 if player.is_button_down(button):
-                     if self.current_game is not None:
-                         self.current_game.button_pressed(player, button)
+            # Geht L2, L1, R1, ... (alle PSMoveButton-Werte) durch
+            for button in psmoveapi.Button.VALUES:
+                if player.is_button_down(button):
+                    if self.current_game is not None:
+                        self.current_game.button_pressed(player, button)
 
             player.update()
 
     def play_sound(self, sound, volume=1.0, pitch=1.0):
-        # TODO: Play sound at volume and pitch
-        print('Would play sound:', sound)
+        self.main_script.play_sound(sound, volume, pitch)
 
     def update(self):
         self.update_controllers()
@@ -125,7 +119,7 @@ class GameFlow(object):
         return tunablevariables.TunableVariables
 
     def end_current_game_no_winner(self):
-        self._end_current_game()
+        self.end_current_game()
 
     def end_current_game(self, *winners):
         if self.current_game is None:
@@ -137,7 +131,7 @@ class GameFlow(object):
         print('Game ends, winner(s):', winners)
 
         for player in self.players:
-            player.led_color = color.Color.BLACK
+            player.led_color = Color.BLACK
 
         if len(winners) == 0:
             # TODO: Play "nobody wins" sound/animation and wait a bit before new game
@@ -145,7 +139,7 @@ class GameFlow(object):
         else:
             winning_sounds = ['WinPlayer1Sound', 'WinPlayer2Sound']
 
-            self.play_sound(winning_sounds[winners[0].player_number % len(winning_sounds), 0.2)
+            self.play_sound(winning_sounds[winners[0].player_number % len(winning_sounds)], 0.2)
 
             def on_finished():
                 self.select_new_game()
@@ -157,12 +151,12 @@ class GameFlow(object):
                     ...  # Do nothing
 
     def start_coroutine(self, crt):
-        print('Would run coroutine:', crt)  # TODO
+        self.main_script.start_coroutine(crt)
 
     def status_message(self):
         result = ''
         if self.current_game is not None:
-            result += 'current game: ' + self.current_game + '\n' + self.current_game.status_message()
+            result += 'current game: ' + str(self.current_game) + '\n' + self.current_game.status_message()
         else:
             result += self.current_message
 
@@ -170,6 +164,6 @@ class GameFlow(object):
 
         for player in self.players:
             result += '\n'
-            result == 'Player ' + (player.player_number + 1) + ': ' + player.score + ' points'
+            result += 'Player ' + str(player.player_number + 1) + ': ' + str(player.score) + ' points'
 
         return result
