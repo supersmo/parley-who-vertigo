@@ -65,9 +65,7 @@ class GameFlow(object):
             player.rumble = 0.0
             max_score = max(max_score, player.score)
 
-        print('Selecting new game')
         if self.remaining_games == 0:
-            print('Session ends')
             self.current_message = 'Session ** Ends'
             remaining_winners = Counter()
 
@@ -75,10 +73,8 @@ class GameFlow(object):
 
             for player in self.players:
                 def on_finished():
-                    print('on_finished called')
                     if remaining_winners.decrement():
                         self.reset_game()
-                print('Player score:', player.score, ', max score:', max_score)
                 if max_score == player.score:
                     remaining_winners.increment()
                     self.start_coroutine(player.game_win_animation(tunables, on_finished))
@@ -92,7 +88,6 @@ class GameFlow(object):
                 games.append(safecracker.SafeCracker(self))
 
             self.current_game = random.choice(games)
-            print('Current game:', self.current_game)
             self.current_game.start_game()
             self.remaining_games -= 1
 
@@ -128,8 +123,6 @@ class GameFlow(object):
         # Disable access to "old" current game; new current game will be set by the winner player
         self.current_game = None
 
-        print('Game ends, winner(s):', winners)
-
         for player in self.players:
             player.led_color = Color.BLACK
 
@@ -155,8 +148,13 @@ class GameFlow(object):
 
     def status_message(self):
         result = ''
+
         if self.current_game is not None:
-            result += 'current game: ' + str(self.current_game) + '\n' + self.current_game.status_message()
+            result += 'Current game: '
+            result += '\033[33m'
+            result += self.current_game.__class__.__name__ if self.current_game else '-'
+            result += '\033[0m'
+            result += '\n' + self.current_game.status_message()
         else:
             result += self.current_message
 

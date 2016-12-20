@@ -15,6 +15,8 @@ class MainScript(object):
         self.gameflow = GameFlow(self)
 
     def on_gui(self):
+        print(end='\033[2J\033[;H')
+        print('\033[32mParley Who Vertigo\033[0m')
         print('='*30)
         print(self.gameflow.status_message())
         print('='*30)

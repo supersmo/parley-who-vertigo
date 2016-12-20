@@ -27,7 +27,7 @@ class AttractMode(minigame.MiniGame):
 
     def status_message(self):
         if self.everyone_ready:
-            return 'Game starts in {} secs'.format(self.seconds_to_start())
+            return 'Game starts in {:.2f} secs'.format(self.seconds_to_start())
         else:
             return 'Come and Play! Press MOVE'
 

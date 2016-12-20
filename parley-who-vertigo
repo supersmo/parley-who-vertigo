@@ -56,7 +56,7 @@ if len(api.connected_controllers) < 2:
     sys.exit(1)
 
 fup = FixedUpdate(30)
-gui = FixedUpdate(5)
+gui = FixedUpdate(33)
 while not api.quit:
     api.update()
     fup.update(api.main_script.update)
