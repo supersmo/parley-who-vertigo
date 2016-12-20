@@ -3,12 +3,8 @@
 import os
 import sys
 
-BASE = os.path.join(os.path.dirname(__file__), '..', '..', 'github', 'psmoveapi')
-
 if 'PSMOVEAPI_LIBRARY_PATH' not in os.environ:
-    os.environ['PSMOVEAPI_LIBRARY_PATH'] = os.path.join(BASE, 'build')
-
-sys.path.insert(0, os.path.join(BASE, 'bindings', 'python'))
+    os.environ['PSMOVEAPI_LIBRARY_PATH'] = os.path.dirname(__file__)
 
 import psmoveapi
 import time
