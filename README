@@ -1,1 +1,1 @@
-pip3 install simpleaudio
+sudo apt-get install libsdl-mixer1.2
