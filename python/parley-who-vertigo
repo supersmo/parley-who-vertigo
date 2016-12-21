@@ -3,8 +3,12 @@
 import os
 import sys
 
+EXTERNAL = os.path.join(os.path.dirname(__file__), 'external')
+
 if 'PSMOVEAPI_LIBRARY_PATH' not in os.environ:
-    os.environ['PSMOVEAPI_LIBRARY_PATH'] = os.path.dirname(__file__)
+    os.environ['PSMOVEAPI_LIBRARY_PATH'] = EXTERNAL
+
+sys.path.insert(0, EXTERNAL)
 
 import psmoveapi
 import time
@@ -61,3 +65,4 @@ while not api.quit:
     api.update()
     fup.update(api.main_script.update)
     gui.update(api.main_script.on_gui)
+    time.sleep(1./60.)
