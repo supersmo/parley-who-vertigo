@@ -6,6 +6,7 @@ from ctypes import CDLL, c_char_p, c_void_p, c_int
 import time
 import platform
 import sys
+import os
 
 
 if platform.system() == 'Darwin':
@@ -15,13 +16,15 @@ elif platform.system() == 'Windows':
 else:
     ext = '.so'
 
+BASE = os.path.dirname(__file__)
+
 
 class SDLMixer(object):
     SDL_INIT_AUDIO = 0x00000010
     AUDIO_S16LSB = 0x8010
 
     def __init__(self, frequency=22050, channels=2, init_sdl=True):
-        self.libSDL = CDLL('libSDL' + ext)
+        self.libSDL = CDLL(os.path.join(BASE, 'libSDL' + ext))
         self.SDL_Init = self.libSDL.SDL_Init
         self.SDL_Init.argtypes = [c_int]
         self.SDL_Quit = self.libSDL.SDL_Quit
@@ -31,7 +34,7 @@ class SDLMixer(object):
         self.SDL_GetError = self.libSDL.SDL_GetError
         self.SDL_GetError.restype = c_char_p
 
-        self.libSDL_mixer = CDLL('libSDL_mixer' + ext)
+        self.libSDL_mixer = CDLL(os.path.join(BASE, 'libSDL_mixer' + ext))
         self.Mix_Init = self.libSDL_mixer.Mix_Init
         self.Mix_Quit = self.libSDL_mixer.Mix_Quit
         self.Mix_OpenAudio = self.libSDL_mixer.Mix_OpenAudio
