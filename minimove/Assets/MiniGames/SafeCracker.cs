@@ -25,20 +25,7 @@ public class SafeCracker : MiniGame {
 	}
 
 	public override string StatusMessage() {
-		string result = "You crack me up little buddy";
-		/*for (int i = 0; i < angles.Length; i++) {
-			result += "[" + i + "] = " + angles [i] + ", ";
-		}
-		result += "\n";
-		for (int i = 0; i < targetAngles.Length; i++) {
-			result += "targetAngles[" + i + "] = " + targetAngles [i] + ", ";
-		}
-		result += "\n";
-		for (int i = 0; i < solvedLocks.Length; i++) {
-			result += "solvedLocks[" + i + "] = " + solvedLocks [i] + ", ";
-		}*/
-
-		return result;
+		return "You crack me up little buddy";
 	}
 
 	public override void StartGame () {
@@ -158,22 +145,6 @@ public class SafeCracker : MiniGame {
 					break;
 			}
 
-			/*
-			if () {
-				player.Rumble = 0.5f;
-				if (player.IsTriggerPressed ()) {
-					player.LEDColor = SafeColor;
-				} else {
-					player.LEDColor = Color.black;
-				}
-			} else {
-				player.LEDColor = Color.black;
-				player.Rumble = 0f;
-			}*/
 		}
-	}
-
-	public override bool CanSupportPlayers(int players) {
-		return true;
 	}
 }

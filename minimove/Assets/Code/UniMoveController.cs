@@ -30,31 +30,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
- /**
- * IMPORTANT NOTES!
- *
- * -- This API has been compiled for Mac OSX (10.7 and later) specifically.
- * 
- * -- This API assumes that the controller has already been paired and connected by Bluetooth beforehand.
- *    To pair a controller(s), use the Pairing Utility provided by the PS Move API http://thp.io/2010/psmove/.
- *    To connect a controller by Bluetooth, just press the PS button after pairing it.
- *    You can also use the controllers by USB, but with limited functionality (see below).
- * 
- * -- Features include:
- * 
- * 	- Setting the RGB LED color and rumble intensity (USB and Bluetooth)
- * 	- Read the status of the digital buttons (Bluetooth only)
- * 	- Read the status of the analog trigger (Bluetooth only)
- * 	- Read values for the internal sensors (Bluetooth only):
- *     - accelorometer
- *     - gyroscope
- *     - magnetometer
- *     - temperature
- *     - battery level
- * 
- * Please see the README for more information!
- **/
-
 using System;
 using UnityEngine;
 using System.Runtime.InteropServices;
@@ -74,22 +49,12 @@ public enum PSMoveConnectionType
 // Not entirely sure why some of these buttons (R3/L3) are exposed...
 public enum PSMoveButton 
 {
-    L2 = 1 << 0x00,
-    R2 = 1 << 0x01,
-    L1 = 1 << 0x02,
-    R1 = 1 << 0x03,
     Triangle = 1 << 0x04,
     Circle = 1 << 0x05,
     Cross = 1 << 0x06,
     Square = 1 << 0x07,
     Select = 1 << 0x08,
-    L3 = 1 << 0x09,
-    R3 = 1 << 0x0A,
     Start = 1 << 0x0B,
-    Up = 1 << 0x0C,
-    Right = 1 << 0x0D,
-    Down = 1 << 0x0E,
-    Left = 1 << 0x0F,
     PS = 1 << 0x10,
     Move = 1 << 0x13,
     Trigger = 1 << 0x14,	/* We can use this value with IsButtonDown() (or the events) to get 
@@ -146,16 +111,11 @@ public class UniMoveController : MonoBehaviour
 	private uint currentButtons = 0;
 	private uint prevButtons = 0;
 	
-	private Vector3 rawAccel = Vector3.down;
 	private Vector3 accel = Vector3.down;
-	private Vector3 magnet = Vector3.zero;
-	private Vector3 rawGyro = Vector3.zero;
-	private Vector3 gyro = Vector3.zero;
-	
+
 	// TODO: These values still need to be implemented, so we don't expose them publicly
 	private PSMove_Battery_Level battery = PSMove_Battery_Level.Batt_20Percent;
-	private float temperature = 0f;
-	
+
 	/// <summary>
     /// Event fired when the controller disconnects unexpectedly (i.e. on going out of range).
     /// </summary>
@@ -233,9 +193,6 @@ public class UniMoveController : MonoBehaviour
 		{
 			// We are interested in every button press between the last update and this one:
 			buttons = buttons | psmove_get_buttons(handle);
-			
-			// The events are not really working from the PS Move Api. So we do our own with the prevButtons
-			//psmove_get_button_events(handle, ref pressed, ref released);
 		}
 		currentButtons = buttons;
 
@@ -294,7 +251,7 @@ public class UniMoveController : MonoBehaviour
 	public void Disconnect()
     {
 		disconnected = true;
-        SetLED(0,0,0);
+		SetLED(Color.black);
         SetRumble(0);
 		psmove_disconnect(handle);
     }
@@ -331,20 +288,7 @@ public class UniMoveController : MonoBehaviour
 		
 		psmove_set_leds(handle, (char)(color.r * 255), (char)(color.g * 255), (char)(color.b * 255));
     }
-	
-	/// <summary>
-    /// Sets the LED color
-    /// </summary>
-    /// <param name="r">Red value of the LED color (0-255)</param>
-    /// <param name="g">Green value of the LED color (0-255)</param>
-    /// <param name="b">Blue value of the LED color (0-255)</param>
-    public void SetLED(byte r, byte g, byte b)
-    {
-		if (disconnected) return;
-		
-		psmove_set_leds(handle, (char)r, (char)g, (char)b);
-    }
-	
+
 	/// <summary>
     /// Value of the analog trigger button (between 0 and 1)
     /// </summary
@@ -354,46 +298,13 @@ public class UniMoveController : MonoBehaviour
     }
 	
 	/// <summary>
-    /// The 3-axis acceleration values. 
-    /// </summary>
-	public Vector3 RawAcceleration 
-	{
-		get { return rawAccel; }
-	}
-	
-	/// <summary>
     /// The 3-axis acceleration values, roughly scaled between -3g to 3g (where 1g is Earth's gravity).
     /// </summary>
 	public Vector3 Acceleration 
 	{
 		get { return accel; }
 	}
-	
-	/// <summary>
-    /// The raw values of the 3-axis gyroscope. 
-    /// </summary>
-	public Vector3 RawGyroscope
-	{
-		get { return rawGyro; }
-	}
-	/// <summary>
-    /// The raw values of the 3-axis gyroscope. 
-    /// </summary>
-	public Vector3 Gyro
-	{
-		get { return gyro; }
-	}
-	
-	/// <summary>
-    /// The raw values of the 3-axis magnetometer.
-    /// To be honest, we don't fully understand what the magnetometer does.
-    /// The C API on which this code is based warns that this isn't fully tested.
-    /// </summary>
-	public Vector3 Magnetometer 
-	{
-		get { return magnet; }
-	}
-	
+
 	/// <summary>
     /// The battery level
     /// </summary>
@@ -401,28 +312,7 @@ public class UniMoveController : MonoBehaviour
 	{
 		get { return battery; }
 	}
-	
-	/// <summary>
-    /// The temperature in Celcius
-    /// </summary>
-	public float Temperature 
-	{
-		get { return temperature; }
-	}
-	
-	/* TODO: These two values still need to be implemented, so we don't expose them publicly... yet!
 
-	public float Battery 
-	{
-		get { return this.battery; }
-	}
-	
-	public float Temperature 
-	{
-		get { return this.temperature; }
-	}
-	*/
-	
 	public PSMoveConnectionType ConnectionType 
 	{
 		get { return psmove_connection_type(handle); }
@@ -436,50 +326,15 @@ public class UniMoveController : MonoBehaviour
     private void ProcessData()
     {	
 		trigger = ((int)psmove_get_trigger(handle)) / 255f;
-		
-		int x = 0, y = 0, z = 0;
-		
-		psmove_get_accelerometer(handle, ref x, ref y, ref z);
-		
-		rawAccel.x = x;
-		rawAccel.y = y;
-		rawAccel.z = z;
-		
-		
+
 		float ax = 0, ay = 0, az = 0;
 		psmove_get_accelerometer_frame(handle, PSMove_Frame.Frame_SecondHalf, ref ax, ref ay, ref az);
 		
 		accel.x = ax;
 		accel.y = ay;
 		accel.z = az;
-		
-		psmove_get_gyroscope(handle, ref x, ref y, ref z );
-		
-		rawGyro.x = x;
-		rawGyro.y = y;
-		rawGyro.z = z;
-		
-		
-		float gx = 0, gy = 0, gz = 0;
-		psmove_get_gyroscope_frame(handle, PSMove_Frame.Frame_SecondHalf, ref gx, ref gy, ref gz);
-		
-		gyro.x = gx;
-		gyro.y = gy;
-		gyro.z = gz;
-		
-		
-		
-		psmove_get_magnetometer(handle, ref x, ref y, ref z );
-		
-		// TODO: Should these values be converted into a more human-understandable range?
-		magnet.x = x;
-		magnet.y = y;
-		magnet.z = z;
-		
+
 		battery = psmove_get_battery(handle);
-		
-		temperature = psmove_get_temperature(handle);
-		
     }
 	#endregion
 	
@@ -488,12 +343,6 @@ public class UniMoveController : MonoBehaviour
 	
 	/* The following functions are bindings to Thomas Perl's C API for the PlayStation Move (http://thp.io/2010/psmove/)
 	 * See README for more details.
-	 * 
-	 * NOTE! We have included bindings for the psmove_pair() function, even though we don't use it here
-	 * See README and Pairing Utility code for more about pairing.
-	 * 
-	 * TODO: Expose hooks to psmove_get_btaddr() and psmove_set_btadd()
-	 * These functions are already called by psmove_pair(), so unless you need to do something special, you won't need them.
 	 */
 	
 	[DllImport("libpsmoveapi")]
@@ -504,15 +353,9 @@ public class UniMoveController : MonoBehaviour
 	
 	[DllImport("libpsmoveapi")]
 	private static extern IntPtr psmove_connect_by_id(int id);
-	
-	[DllImport("libpsmoveapi")]
-	private static extern int psmove_pair(IntPtr move);
-	
+
 	[DllImport("libpsmoveapi")]
 	private static extern PSMoveConnectionType psmove_connection_type(IntPtr move);
-	
-	[DllImport("libpsmoveapi")]
-	private static extern int psmove_has_calibration(IntPtr move);
 	
 	[DllImport("libpsmoveapi")]
 	private static extern void psmove_set_leds(IntPtr move, char r, char g, char b);
@@ -528,34 +371,16 @@ public class UniMoveController : MonoBehaviour
 		
 	[DllImport("libpsmoveapi")]
 	private static extern uint psmove_get_buttons(IntPtr move);
-	
-	[DllImport("libpsmoveapi")]
-	private static extern uint psmove_get_button_events(IntPtr move, ref uint pressed, ref uint released);
-		
+
 	[DllImport("libpsmoveapi")]
 	private static extern char psmove_get_trigger(IntPtr move);
-	
-	[DllImport("libpsmoveapi")]
-	private static extern float psmove_get_temperature(IntPtr move);
-	
+
 	[DllImport("libpsmoveapi")]
 	private static extern PSMove_Battery_Level psmove_get_battery(IntPtr move);
-	
-	[DllImport("libpsmoveapi")]
-	private static extern void psmove_get_accelerometer(IntPtr move, ref int ax, ref int ay, ref int az);
-	
+
 	[DllImport("libpsmoveapi")]
 	private static extern void psmove_get_accelerometer_frame(IntPtr move,PSMove_Frame frame, ref float ax, ref float ay, ref float az);
-	
-	[DllImport("libpsmoveapi")]
-	private static extern void psmove_get_gyroscope(IntPtr move, ref int gx, ref int gy, ref int gz);
-	
-	[DllImport("libpsmoveapi")]
-	private static extern void psmove_get_gyroscope_frame(IntPtr move,PSMove_Frame frame, ref float gx, ref float gy, ref float gz);
-	
-	[DllImport("libpsmoveapi")]
-	private static extern void psmove_get_magnetometer(IntPtr move, ref int mx, ref int my, ref int mz);
-	
+
 	[DllImport("libpsmoveapi")]
 	private static extern void psmove_disconnect(IntPtr move);
 	

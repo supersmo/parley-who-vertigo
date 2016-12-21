@@ -36,11 +36,7 @@ public class ShakeIt : MiniGame {
 	}
 
 	public override string StatusMessage() {
-		string result = "Balooooooonit up pump it baloon baloo the bear";
-		/*for (int i = 0; i < counters.Length; i++) {
-			result += "counters[" + i + "] = " + counters [i] + ", ";
-		}*/
-		return result;
+		return "Balooooooonit up pump it baloon baloo the bear";
 	}
 
 	public override void Update() {
@@ -60,7 +56,6 @@ public class ShakeIt : MiniGame {
 					player.Rumble = 1f;
 				} else if (currentValue % mod == 0) {
 					int mode = (currentValue / mod) % 2;
-					//gameFlow.PlaySound ("InflateSound", 3f * (float)currentValue / 100f);
 					gameFlow.PlaySound ("SqueakSound", 3f * (float)currentValue / 100f,
 						(mode == 0) ? 1f : 1.5f);
 				}
@@ -75,9 +70,5 @@ public class ShakeIt : MiniGame {
 				break;
 			}
 		}
-	}
-
-	public override bool CanSupportPlayers(int players) {
-		return true;
 	}
 }

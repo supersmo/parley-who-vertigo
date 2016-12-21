@@ -17,5 +17,4 @@ public abstract class MiniGame {
 
 	public abstract void StartGame ();
 	public abstract void Update ();
-	public abstract bool CanSupportPlayers(int players);
 }
