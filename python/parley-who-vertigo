@@ -1,4 +1,4 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export PYTHONPATH=$DIR
-exec $DIR/external/bin/python3.5 -m game
+exec "$DIR/external/bin/python3.5" -m game

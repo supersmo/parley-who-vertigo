@@ -22,6 +22,7 @@ class MainScript(object):
         print('='*30)
 
     def update(self):
+        self.mixer.update()
         self.gameflow.update()
         self.coroutines = [coroutine for coroutine in self.coroutines if coroutine.schedule()]
 
