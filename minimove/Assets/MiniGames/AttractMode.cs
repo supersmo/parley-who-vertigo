@@ -97,7 +97,4 @@ public class AttractMode : MiniGame
 		}
 	}
 
-	public override bool CanSupportPlayers(int players) {
-		return true;
-	}
 }

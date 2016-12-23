@@ -37,7 +37,6 @@ public class GameFlow {
 
 		currentGame = new AttractMode (this);
 		currentGame.StartGame ();
-		//SelectNewGame ();
 	}
 
 	public void EveryoneIsReady() {
@@ -91,19 +90,11 @@ public class GameFlow {
 			if (tunables.EnableShakeIt) {
 				games.Add (new ShakeIt (this));
 			}
-			if (tunables.EnableFreeze) {
-				games.Add (new Freeze (this));
-			}
 			if (tunables.EnableSafeCracker) {
 				games.Add (new SafeCracker (this));
 			}
 
-			MiniGame candidate = null;
-			do {
-				candidate = games [rnd.Next (games.Count)];
-			} while (!candidate.CanSupportPlayers(players.Count));
-
-			currentGame = candidate;
+			currentGame = games [rnd.Next (games.Count)];
 				
 			currentGame.StartGame ();
 			remainingGames--;
@@ -111,9 +102,6 @@ public class GameFlow {
 	}
 
 	void UpdateControllers() {
-		/*
-		Color[] colors = { Color.cyan, Color.red, Color.blue, Color.green, Color.magenta };
-*/
 		foreach (var player in players) {
 			// Geht L2, L1, R1, ... (alle PSMoveButton-Werte) durch
 			foreach (PSMoveButton button in System.Enum.GetValues(typeof(PSMoveButton))) {
@@ -123,12 +111,6 @@ public class GameFlow {
 					}
 				}
 			}
-
-			/*player.LEDColor = colors [player.PlayerNumber % colors.Length];
-
-			if (player.move.GetButtonDown (PSMoveButton.Cross)) {
-				Debug.Log ("Button pressed");
-			}*/
 
 			player.Update ();
 		}
@@ -204,7 +186,6 @@ public class GameFlow {
 			};
 
 			foreach (var winner in winners) {
-				//winner.LEDColor = Color.white;
 				StartCoroutine (winner.WinAnimation (GetTunables (), onFinished));
 				winner.Score++;
 				onFinished = delegate() {
