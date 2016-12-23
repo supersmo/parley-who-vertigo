@@ -1,0 +1,4 @@
+(chip) ~S/psmoveapi% sudo systemctl stop bt_rtk_hciattach@ttyS1.service
+(chip) ~S/psmoveapi% sudo systemctl stop bluetooth.service
+(chip) ~S/psmoveapi% sudo systemctl start bt_rtk_hciattach@ttyS1.service
+(chip) ~S/psmoveapi% sudo systemctl start bluetooth.service
