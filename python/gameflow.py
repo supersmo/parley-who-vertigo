@@ -128,9 +128,15 @@ class GameFlow(object):
 
         if len(winners) == 0:
             # TODO: Play "nobody wins" sound/animation and wait a bit before new game
+            self.current_message = 'Nobody wins...'
             self.select_new_game()
         else:
             winning_sounds = ['WinPlayer1Sound', 'WinPlayer2Sound']
+
+            if len(winners) == 1:
+                self.current_message = 'Player %d wins the round' % (winners[0].player_number + 1)
+            else:
+                self.current_message = 'Winners: Player ' + ' and '.join(str(w.player_number+1) for w in winners)
 
             self.play_sound(winning_sounds[winners[0].player_number % len(winning_sounds)], 0.2)
 
@@ -147,21 +153,14 @@ class GameFlow(object):
         self.main_script.start_coroutine(crt)
 
     def status_message(self):
-        result = ''
-
+        result = []
         if self.current_game is not None:
-            result += 'Current game: '
-            result += '\033[33m'
-            result += self.current_game.__class__.__name__ if self.current_game else '-'
-            result += '\033[0m'
-            result += '\n' + self.current_game.status_message()
+            result.append(self.current_game.__class__.__name__ if self.current_game else '-')
+            result.append(self.current_game.status_message())
         else:
-            result += self.current_message
+            result.append('Woop!')
+            result.append(self.current_message)
 
-        result += '\n'
-
-        for player in self.players:
-            result += '\n'
-            result += 'Player ' + str(player.player_number + 1) + ': ' + str(player.score) + ' points'
+        result.append(str(player.score) for player in self.players)
 
         return result

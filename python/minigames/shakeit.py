@@ -30,7 +30,10 @@ class ShakeIt(minigame.MiniGame):
             self.gameflow.start_coroutine(player.sphere_color_animation(parts, on_intro_blinking_finished))
 
     def status_message(self):
-        return 'Balooooooonit up pump it baloon baloo the bear'
+        return 'Baloooon it pump it baloo the bear'
+
+    def base_color(self):
+        return self.PUMPING_COLOR
 
     def update(self):
         if self.players_ready < len(self.gameflow.players):

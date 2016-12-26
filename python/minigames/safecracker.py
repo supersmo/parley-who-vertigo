@@ -25,7 +25,10 @@ class SafeCracker(minigame.MiniGame):
         self.players_ready = 0
 
     def status_message(self):
-        return 'You crack me up little buddy'
+        return 'You crack me up lil\' buddy'
+
+    def base_color(self):
+        return self.SAFE_COLOR
 
     def start_game(self):
         def on_intro_blinking_finished():

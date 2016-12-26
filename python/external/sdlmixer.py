@@ -8,6 +8,8 @@ import platform
 import sys
 import os
 
+import sdl
+
 
 if platform.system() == 'Darwin':
     ext = '.dylib'
@@ -25,25 +27,15 @@ class SDL_Event(Structure):
     ]
 
 
-class SDLMixer(object):
-    SDL_INIT_AUDIO = 0x00000010
+class SDLMixer(sdl.SDL):
     AUDIO_S16LSB = 0x8010
 
-    def __init__(self, frequency=22050, channels=2, init_sdl=True):
-        self.libSDL = CDLL(os.path.join(BASE, 'libSDL' + ext))
-        self.SDL_Init = self.libSDL.SDL_Init
-        self.SDL_Init.argtypes = [c_int]
-        self.SDL_SetVideoMode = self.libSDL.SDL_SetVideoMode
-        self.SDL_SetVideoMode.argtypes = [c_int, c_int, c_int, c_int]
-        self.SDL_PollEvent = self.libSDL.SDL_PollEvent
-        self.SDL_PollEvent.argtypes = [c_void_p]
-        self.SDL_PollEvent.restype = c_int
-        self.SDL_Quit = self.libSDL.SDL_Quit
+    def __init__(self, width, height, frequency=22050, channels=2):
+        super().__init__(width, height)
+
         self.SDL_RWFromFile = self.libSDL.SDL_RWFromFile
         self.SDL_RWFromFile.argtypes = [c_char_p, c_char_p]
         self.SDL_RWFromFile.restype = c_void_p
-        self.SDL_GetError = self.libSDL.SDL_GetError
-        self.SDL_GetError.restype = c_char_p
 
         self.libSDL_mixer = CDLL(os.path.join(BASE, 'libSDL_mixer' + ext))
         self.Mix_Init = self.libSDL_mixer.Mix_Init
@@ -59,23 +51,10 @@ class SDLMixer(object):
         self.Mix_FreeChunk = self.libSDL_mixer.Mix_FreeChunk
         self.Mix_FreeChunk.argtypes = [c_void_p]
 
-        self.sdl_inited = False
-        if init_sdl:
-            if self.SDL_Init(self.SDL_INIT_AUDIO) == -1:
-                raise RuntimeError(SDL_GetError().decode('utf-8'))
-            self.SDL_SetVideoMode(640, 480, 0, 0)
-            self.sdl_inited = True
-
         self.Mix_Init(0)
 
         if self.Mix_OpenAudio(frequency, self.AUDIO_S16LSB, channels, 1024) == -1:
             raise RuntimeError(SDL_GetError().decode('utf-8'))
-
-    def update(self):
-        event = SDL_Event()
-        while self.SDL_PollEvent(byref(event)):
-            if event.type == 12:  # SDL_QUIT
-                raise RuntimeError('Quit')
 
     def load(self, filename):
         rw = self.SDL_RWFromFile(c_char_p(filename.encode('utf-8')), c_char_p(b'rb'))
@@ -85,8 +64,7 @@ class SDLMixer(object):
     def __del__(self):
         self.Mix_CloseAudio()
         self.Mix_Quit()
-        if self.sdl_inited:
-            self.SDL_Quit()
+        super().__del__()
 
 
 class Sample(object):
@@ -105,7 +83,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         print('Usage: {} /path/to/wavfile.wav'.format(sys.argv[0]))
         sys.exit(1)
-    mixer = SDLMixer()
+    mixer = SDLMixer(640, 480)
     sound = mixer.load(sys.argv[1])
     print('Playing sound 4 times...')
     for i in range(4):

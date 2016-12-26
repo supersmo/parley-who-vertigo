@@ -25,6 +25,9 @@ class AttractMode(minigame.MiniGame):
         self.intensities = [0.0 for player in self.gameflow.players]
         self.readyness = [False for player in self.gameflow.players]
 
+    def base_color(self):
+        return self.READY_COLOR
+
     def status_message(self):
         if self.everyone_ready:
             return 'Game starts in {:.2f} secs'.format(self.seconds_to_start())

@@ -8,6 +8,9 @@ class MiniGame(object):
     def status_message(self):
         return ''
 
+    def base_color(self):
+        raise NotImplementedError
+
     def start_game(self):
         raise NotImplementedError
 

@@ -49,5 +49,8 @@ class MoveSays(minigame.MiniGame):
                 if self.players_remaining == 0:
                     self.gameflow.end_current_game_no_winner()
 
+    def base_color(self):
+        return psmovecolor.PSMoveColor.get_random_color()
+
     def update(self):
         ...
