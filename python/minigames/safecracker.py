@@ -37,7 +37,7 @@ class SafeCracker(minigame.MiniGame):
             if self.players_ready == len(self.gameflow.players):
                 self.angles = [0 for player in self.gameflow.players]
 
-                self.target_angles = [random.randint(0, self.angle_steps) * 360 / self.angle_steps
+                self.target_angles = [random.randint(0, self.angle_steps-1) * 360 / self.angle_steps
                                       for player in self.gameflow.players]
 
                 self.last_click_angles = [0 for player in self.gameflow.players]
@@ -61,7 +61,7 @@ class SafeCracker(minigame.MiniGame):
         if self.solved_locks[player.player_number] == self.number_of_locks:
             self.gameflow.end_current_game(player)
         else:
-            self.target_angles[player.player_number] = random.randint(0, self.angle_steps) * 360 / self.angle_steps
+            self.target_angles[player.player_number] = random.randint(0, self.angle_steps-1) * 360 / self.angle_steps
             self.solve_state[player.player_number] = SolveState.Searching
 
     def update(self):
