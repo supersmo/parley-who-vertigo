@@ -1,0 +1,54 @@
+How to install Parley Who Vertigo on Pocket C.H.I.P
+===================================================
+
+Part 1: Starting from a clean slate / hidraw kernel
+
+ 1. Go to http://flash.getchip.com/ and flash the 4.4 Firmware Image
+    I've had best results with downloading the firmware image first
+    and then flashing the downloaded file (instead of net flashing)
+ 2. Boot and connect via MicroUSB cable to macOS computer
+ 3. screen /dev/tty.usbmodem14113 (where the number might differ)
+ 4. Login as user "chip", password "chip"
+ 5. Set up WIFI via the GUI on-screen
+ 6. sudo apt-get update && sudo apt-get dist-upgrade -y
+    # This should install linux-image-4.4.13-ntc-mlc (4.4.13-58)
+ 7. Reboot
+ 8. Verify that "dmesg | grep hidraw" prints out a line containing:
+    "hidraw: raw HID events driver (C) Jiri Kosina"
+
+Part 2: Building and setting up PS Move API
+
+ 1. sudo apt-get install git python3 build-essential
+ 2. git clone --recursive git://github.com/thp/psmoveapi.git
+ 3. cd psmoveapi
+ 4. bash -e -x scripts/pocketchip/install_dependencies.sh
+ 5. bash -e -x scripts/pocketchip/build.sh
+ 6. sudo cp contrib/99-psmove.rules /etc/udev/rules.d/
+ 7. This should leave you with a tarball in the upload/ folder
+ 8. You can install the tool system-wide using:
+    sudo cp build/psmove /usr/local/bin/
+
+Part 3: Pairing Controllers
+
+ 1. Connect the controller via a USB cable
+ 2. Run "sudo psmove pair"
+ 3. Disconnect the USB cable and press the PS button
+ 4. Run "psmove list"
+ 5. Continue pairing all remaining controllers
+ 6. After pairing + connecting all controllers
+ 7. Run "psmove calibrate"
+ 8. Verify the proper connection with "psmove list"
+
+Part 4: Game Library Dependencies
+
+ 1. sudo apt-get install libsdl-mixer1.2 libsdl1.2debian libx11-dev
+ 2. git clone git://github.com/thp/eglo.git && make -C eglo
+ 3. Test if OpenGL ES 2 works: LD_LIBRARY_PATH=eglo eglo/egloapp
+
+Part 5: Install The Game
+
+ 1. sudo apt-get install openssh-server
+ 2. On the host, copy the files over (python/ subdirectory):
+    rsync -rpav . chip@chip.local:parley-who-vertigo/
+ 3. Start with: python3 game.py
+
