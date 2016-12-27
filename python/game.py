@@ -55,10 +55,6 @@ api = API()
 api.update()
 api.main_script.start()
 
-if len(api.connected_controllers) < 2:
-    print('Not enough controllers to start the game')
-    sys.exit(1)
-
 fup = FixedUpdate(30)
 gui = FixedUpdate(33)
 while not api.quit:

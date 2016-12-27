@@ -29,7 +29,9 @@ class AttractMode(minigame.MiniGame):
         return self.READY_COLOR
 
     def status_message(self):
-        if self.everyone_ready:
+        if len(self.intensities) < 2:
+            return '%d controller(s) connected, need at least 2!' % (len(self.intensities),)
+        elif self.everyone_ready:
             return 'Game starts in {:.2f} secs'.format(self.seconds_to_start())
         else:
             return 'Come and Play! Press MOVE'
@@ -38,6 +40,9 @@ class AttractMode(minigame.MiniGame):
         return (self.game_start_time - time.time())
 
     def update(self):
+        if len(self.intensities) < 2:
+            return
+
         tunables = self.gameflow.get_tunables()
 
         for i in range(len(self.intensities)):
