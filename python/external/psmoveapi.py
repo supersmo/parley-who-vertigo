@@ -28,23 +28,10 @@
 
 
 from ctypes import *
-import sys
-import os
 import math
 
-library_path = os.environ.get('PSMOVEAPI_LIBRARY_PATH', None)
-if library_path:
-    library_prefix = library_path + os.sep
-else:
-    library_prefix = ''
 
-if os.name == 'nt':
-    libpsmoveapi = CDLL(library_prefix + 'libpsmoveapi.dll')
-if sys.platform == 'darwin':
-    libpsmoveapi = CDLL(library_prefix + 'libpsmoveapi.dylib')
-else:
-    libpsmoveapi = CDLL(library_prefix + 'libpsmoveapi.so')
-
+libpsmoveapi = CDLL('psmoveapi')
 
 class RGB(Structure):
     _fields_ = [

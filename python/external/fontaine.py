@@ -3,7 +3,6 @@
 
 from ctypes import CDLL, c_char_p, c_void_p, c_int, Structure, byref, c_byte, c_float, c_uint
 
-import platform
 import time
 import math
 import os
@@ -11,19 +10,9 @@ import os
 import sdl
 
 
-if platform.system() == 'Darwin':
-    ext = '.dylib'
-elif platform.system() == 'Windows':
-    ext = '.dll'
-else:
-    ext = '.so'
-
-BASE = os.path.dirname(__file__)
-
-
 class GLTextRenderer(object):
     def __init__(self, width, height):
-        self.libfontainegl = CDLL(os.path.join(BASE, 'libfontainegl' + ext))
+        self.libfontainegl = CDLL('fontainegl')
         self.fontaine_new = self.libfontainegl.fontaine_new
         self.fontaine_new.argtypes = [c_void_p, c_void_p, c_void_p]
         self.fontaine_new.restype = c_void_p
@@ -70,16 +59,3 @@ class GLTextRenderer(object):
             self.fontaine_free(self._font)
         except:
             ...
-
-
-if __name__ == '__main__':
-    screen = sdl.SDL(640, 480)
-    renderer = GLTextRenderer(screen.width, screen.height)
-    renderer.enable_blending()
-    while True:
-        for i in range(20):
-            renderer.enqueue(i * 15.0, 4 * (i + 20.), 2. + .5 * math.sin(time.time()),
-                    i, ((i*10) << 24) | 0x00006090, 'Hello World!')
-        renderer.clear(0., 1., 1., 1.0)
-        renderer.flush()
-        screen.update()

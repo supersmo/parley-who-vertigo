@@ -3,28 +3,7 @@
 
 from ctypes import CDLL, c_char_p, c_void_p, c_int, Structure, byref, c_byte
 
-import time
-import platform
-import sys
-import os
-
 import sdl
-
-
-if platform.system() == 'Darwin':
-    ext = '.dylib'
-elif platform.system() == 'Windows':
-    ext = '.dll'
-else:
-    ext = '.so'
-
-BASE = os.path.dirname(__file__)
-
-class SDL_Event(Structure):
-    _fields_ = [
-            ('type', c_byte),
-            ('padding', c_int * 1024),
-    ]
 
 
 class SDLMixer(sdl.SDL):
@@ -37,7 +16,7 @@ class SDLMixer(sdl.SDL):
         self.SDL_RWFromFile.argtypes = [c_char_p, c_char_p]
         self.SDL_RWFromFile.restype = c_void_p
 
-        self.libSDL_mixer = CDLL(os.path.join(BASE, 'libSDL_mixer' + ext))
+        self.libSDL_mixer = CDLL('SDL_mixer')
         self.Mix_Init = self.libSDL_mixer.Mix_Init
         self.Mix_Quit = self.libSDL_mixer.Mix_Quit
         self.Mix_OpenAudio = self.libSDL_mixer.Mix_OpenAudio
@@ -77,17 +56,3 @@ class Sample(object):
 
     def __del__(self):
         self.mixer.Mix_FreeChunk(self.chunk)
-
-
-if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        print('Usage: {} /path/to/wavfile.wav'.format(sys.argv[0]))
-        sys.exit(1)
-    mixer = SDLMixer(640, 480)
-    sound = mixer.load(sys.argv[1])
-    print('Playing sound 4 times...')
-    for i in range(4):
-        sound.play()
-        time.sleep(0.3)
-    print('Will stop playing after 3 seconds...')
-    time.sleep(3)

@@ -2,13 +2,21 @@
 
 import os
 import sys
+import platform
 
 EXTERNAL = os.path.join(os.path.dirname(__file__), 'external')
 
-if 'PSMOVEAPI_LIBRARY_PATH' not in os.environ:
-    os.environ['PSMOVEAPI_LIBRARY_PATH'] = EXTERNAL
-
 sys.path.insert(0, EXTERNAL)
+
+import ctypes_dll_search
+
+if platform.system() == 'Linux' and os.path.exists('/usr/bin/pocket-home'):
+    ctypes_dll_search.library_path = os.path.join(EXTERNAL, 'pocketchip')
+elif platform.system() == 'Darwin':
+    ctypes_dll_search.library_path = os.path.join(EXTERNAL, 'macos')
+else:
+    print('Unknown/unsupported platform:', platform.system())
+
 
 import psmoveapi
 import time

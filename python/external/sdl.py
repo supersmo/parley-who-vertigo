@@ -3,18 +3,6 @@
 
 from ctypes import CDLL, c_char_p, c_void_p, c_int, Structure, byref, c_byte
 
-import platform
-import os
-
-
-if platform.system() == 'Darwin':
-    ext = '.dylib'
-elif platform.system() == 'Windows':
-    ext = '.dll'
-else:
-    ext = '.so'
-
-BASE = os.path.dirname(__file__)
 
 class SDL_Event(Structure):
     _fields_ = [
@@ -32,7 +20,7 @@ class SDL(object):
         self.width = width
         self.height = height
 
-        self.libSDL = CDLL(os.path.join(BASE, 'libSDL' + ext))
+        self.libSDL = CDLL('SDL')
         self.SDL_Init = self.libSDL.SDL_Init
         self.SDL_Init.argtypes = [c_int]
         self.SDL_SetVideoMode = self.libSDL.SDL_SetVideoMode
