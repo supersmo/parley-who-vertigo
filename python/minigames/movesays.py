@@ -41,7 +41,7 @@ class MoveSays(minigame.MiniGame):
             if color == player.led_color:
                 self.gameflow.play_sound('BeepSound', 0.5)
                 self.gameflow.end_current_game(player)
-            else:
+            elif player.led_color != Color.BLACK:
                 self.gameflow.play_sound('BadBeepSound', 0.5)
                 # TODO: Play "dead" animation
                 player.led_color = Color.BLACK
