@@ -22,7 +22,7 @@ Part 2: Building and setting up PS Move API
  2. git clone --recursive git://github.com/thp/psmoveapi.git
  3. cd psmoveapi
  4. bash -e -x scripts/pocketchip/install_dependencies.sh
- 5. bash -e -x scripts/pocketchip/build.sh
+ 5. LC_ALL=C bash -e -x scripts/pocketchip/build.sh
  6. sudo cp contrib/99-psmove.rules /etc/udev/rules.d/
  7. This should leave you with a tarball in the upload/ folder
  8. You can install the tool system-wide using:
