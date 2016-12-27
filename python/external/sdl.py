@@ -35,14 +35,17 @@ class SDL(object):
 
         if self.SDL_Init(self.SDL_INIT_VIDEO | self.SDL_INIT_AUDIO) == -1:
             raise RuntimeError(SDL_GetError().decode('utf-8'))
-        self.SDL_SetVideoMode(width, height, 0, self.SDL_OPENGL)
+
+        if self.width != 0 and self.height != 0:
+            self.SDL_SetVideoMode(width, height, 0, self.SDL_OPENGL)
 
     def update(self):
         event = SDL_Event()
         while self.SDL_PollEvent(byref(event)):
             if event.type == 12:  # SDL_QUIT
                 raise RuntimeError('Quit')
-        self.SDL_GL_SwapBuffers()
+        if self.width != 0 and self.height != 0:
+            self.SDL_GL_SwapBuffers()
 
     def __del__(self):
         try:

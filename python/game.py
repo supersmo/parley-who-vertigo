@@ -10,8 +10,10 @@ sys.path.insert(0, EXTERNAL)
 
 import ctypes_dll_search
 
+use_chip = False
 if platform.system() == 'Linux' and os.path.exists('/usr/bin/pocket-home'):
     ctypes_dll_search.library_path = os.path.join(EXTERNAL, 'pocketchip')
+    use_chip = True
 elif platform.system() == 'Darwin':
     ctypes_dll_search.library_path = os.path.join(EXTERNAL, 'macos')
 else:
@@ -27,7 +29,7 @@ class API(psmoveapi.PSMoveAPI):
     def __init__(self):
         super().__init__()
         self.quit = False
-        self.main_script = MainScript(self)
+        self.main_script = MainScript(self, use_chip)
         self.connected_controllers = []
 
     def on_connect(self, controller):

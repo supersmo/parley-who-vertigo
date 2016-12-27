@@ -10,6 +10,7 @@ import random
 
 import sdl
 import sdlmixer
+import eglo
 import fontaine
 
 
@@ -61,18 +62,22 @@ class Particle(object):
 
 
 class MainScript(object):
-    def __init__(self, api):
+    def __init__(self, api, use_chip):
         self.api = api
         self.coroutines = []
-        self.screen = self.mixer = sdlmixer.SDLMixer(1024, 600)
-        self.renderer = fontaine.GLTextRenderer(self.screen.width, self.screen.height)
+        if use_chip:
+            self.eglo = eglo.EGLO()
+        else:
+            self.eglo = None
+        self.screen = self.mixer = sdlmixer.SDLMixer(1024 if not use_chip else 0, 600 if not use_chip else 0)
+        self.renderer = fontaine.GLTextRenderer(1024, 600)
         self.renderer.enable_blending()
         self.sounds = {}
         self.current_base_color = Color(0.3, 0.3, 0.3)
         self.line_particles = [
             Particle(random.choice(['Parley', 'Who', 'Vertigo']),
                      random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(0, 3), random.uniform(-0.005, 0.005))
-            for _ in range(100)
+            for _ in range(30 if use_chip else 100)
         ]
 
     def start(self):
@@ -141,8 +146,11 @@ class MainScript(object):
             self.renderer.enqueue(x, y, scale, rotation, to_rgba32(color, opacity), text)
 
         self.renderer.flush()
+        if self.eglo is not None:
+            self.eglo.swap_buffers()
+        else:
+            self.screen.update()
 
-        self.mixer.update()
         self.gameflow.update()
         self.coroutines = [coroutine for coroutine in self.coroutines if coroutine.schedule()]
 
