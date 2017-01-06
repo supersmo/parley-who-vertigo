@@ -1,15 +1,6 @@
-4.3.0-ntc   -> da ist hidraw schon vorhanden
-
 Release im Dezember (alpha):
 
  - für macOS (.app zum einfachen starten mit UI)
  - für Pocket C.H.I.P zum selber installieren (manuell)
-
-TODOs:
-
- - Testen / Bugs fixen
- - SDL+SDL_mixer statisch bauen
- - Python3 statisch bauen(?)
- - APP bauen für
 
 Made with Pu-erh tea
