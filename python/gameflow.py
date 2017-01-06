@@ -95,7 +95,7 @@ class GameFlow(object):
         for player in self.players:
             # Geht L2, L1, R1, ... (alle PSMoveButton-Werte) durch
             for button in psmoveapi.Button.VALUES:
-                if player.is_button_down(button):
+                if player.is_button_pressed_now_and_not_before(button):
                     if self.current_game is not None:
                         self.current_game.button_pressed(player, button)
 

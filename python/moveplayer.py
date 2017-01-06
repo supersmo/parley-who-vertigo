@@ -31,6 +31,7 @@ class MovePlayer(object):
         self.led_color = Color.BLACK
         self.rumble = 0.0
         self.score = 0
+        self.last_buttons = 0
 
     @property
     def acceleration(self):
@@ -39,6 +40,7 @@ class MovePlayer(object):
     def update(self):
         self.controller.color = self.led_color
         self.controller.rumble = self.rumble
+        self.last_buttons = self.controller.buttons
 
     def sphere_color_animation(self, parts, on_finished, on_changed=None):
         for part in parts:
@@ -83,6 +85,9 @@ class MovePlayer(object):
     def is_unstable(self, tunables):
         return self.controller.accelerometer.length() >= tunables.UnstableThreshold
 
+    def get_accelerometer_x(self):
+        return self.controller.accelerometer.x
+
     def safe_angle(self):
         v = Vec2(self.acceleration.x, self.acceleration.y)
         v.normalize()
@@ -99,3 +104,6 @@ class MovePlayer(object):
 
     def is_button_down(self, button):
         return self.controller.still_pressed(button)
+
+    def is_button_pressed_now_and_not_before(self, button):
+        return ((self.controller.buttons & button) != 0)  and ((self.last_buttons & button) == 0)
