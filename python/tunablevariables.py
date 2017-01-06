@@ -33,11 +33,6 @@ class TunableVariables(object):
     # How long to make the controller black after the game win animation
     GameWinAnimationWaitAfterSec = 2.0
 
-    # Disable and enable minigames on the fly
-    EnableMoveSays = True
-    EnableSafeCracker = True
-    EnableShakeIt = True
-
     # Intensity multiplicator for games where the controller is usually dark
     # (e.g. in SafeCracker, the intensity when users are searching for the code)
     ColorIntensityDuringGameplay = 0.2
@@ -46,4 +41,4 @@ class TunableVariables(object):
     AttractLoopDelaySec = 0.4
 
     # Seconds the game start is delayed after everyone is ready
-    AttractStartDelaySec = 7.0
+    AttractStartDelaySec = 3.0

@@ -4,6 +4,8 @@ import moveplayer
 from color import Color
 
 class ShakeIt(minigame.MiniGame):
+    ENABLED = True
+
     PUMPING_COLOR = Color.GREEN
 
     def __init__(self, gameflow):

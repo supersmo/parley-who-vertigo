@@ -5,6 +5,8 @@ import moveplayer
 from color import Color
 
 class MoveSays(minigame.MiniGame):
+    ENABLED = True
+
     def __init__(self, gameflow):
         super().__init__(gameflow)
         self.players_ready = 0

@@ -2,16 +2,16 @@ import psmoveapi
 import moveplayer
 import coroutine
 import tunablevariables
+import minigame
 
 import random
+import glob
+import os
+import importlib
 
 from color import Color
 
 from minigames import attractmode
-from minigames import movesays
-from minigames import shakeit
-from minigames import safecracker
-
 
 class Counter(object):
     def __init__(self):
@@ -23,6 +23,20 @@ class Counter(object):
     def decrement(self):
         self.value -= 1
         return self.value == 0
+
+
+def find_minigame_classes():
+    """Find all Python classes that subclass minigame.MiniGame in minigames/"""
+    for filename in glob.glob(os.path.join(os.path.dirname(__file__), 'minigames', '*.py')):
+        bn = os.path.basename(filename)
+        if bn == '__init__.py':
+            continue
+
+        modulename, _ = os.path.splitext(bn)
+        module = importlib.import_module('minigames.' + modulename)
+        for k, v in module.__dict__.items():
+            if isinstance(v, type) and issubclass(v, minigame.MiniGame):
+                yield (modulename, v)
 
 
 class GameFlow(object):
@@ -80,12 +94,14 @@ class GameFlow(object):
                     self.start_coroutine(player.game_win_animation(tunables, on_finished))
         else:
             games = []
-            if tunables.EnableMoveSays:
-                games.append(movesays.MoveSays(self))
-            if tunables.EnableShakeIt:
-                games.append(shakeit.ShakeIt(self))
-            if tunables.EnableSafeCracker:
-                games.append(safecracker.SafeCracker(self))
+
+            for minigame_module, minigame_class in find_minigame_classes():
+                is_enabled = getattr(minigame_class, 'ENABLED', True)
+                if is_enabled:
+                    print('Found minigame:', minigame_class)
+                    games.append(minigame_class(self))
+                else:
+                    print('Minigame is disabled:', minigame_class)
 
             self.current_game = random.choice(games)
             self.current_game.start_game()

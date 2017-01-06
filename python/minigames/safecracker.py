@@ -11,6 +11,8 @@ class SolveState(object):
 
 
 class SafeCracker(minigame.MiniGame):
+    ENABLED = True
+
     SAFE_COLOR = Color(0.91, 0.78, 0.0)
 
     def __init__(self, gameflow):

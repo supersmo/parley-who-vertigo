@@ -4,6 +4,9 @@ import time
 from color import Color
 
 class AttractMode(minigame.MiniGame):
+    # Not enabled as "normal" minigame, it's a special minigame we use directly
+    ENABLED = False
+
     READY_COLOR = Color(0.4, 0.9, 0.0)
 
     def __init__(self, gameflow):
