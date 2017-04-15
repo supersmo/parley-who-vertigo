@@ -69,15 +69,18 @@ class MainScript(object):
             self.eglo = eglo.EGLO()
         else:
             self.eglo = None
-        self.screen = self.mixer = sdlmixer.SDLMixer(1024 if not use_chip else 0, 600 if not use_chip else 0)
-        self.renderer = fontaine.GLTextRenderer(1024, 600)
+        self.screen = self.mixer = sdlmixer.SDLMixer(480 if not use_chip else 0, 272 if not use_chip else 0)
+        self.renderer = fontaine.GLTextRenderer(480, 272, os.path.join(os.path.dirname(__file__), 'art', 'pwv.tile'))
+
         self.renderer.enable_blending()
         self.sounds = {}
         self.current_base_color = Color(0.3, 0.3, 0.3)
         self.line_particles = [
-            Particle(random.choice(['Parley', 'Who', 'Vertigo']),
+            Particle(random.choice(['ControllerBlue', 'ControllerGreen', 'ControllerGrey',
+                                    'ControllerPurple', 'ControllerRed', 'ControllerWhite',
+                                    'ControllerYellow']),
                      random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(0, 3), random.uniform(-0.005, 0.005))
-            for _ in range(30 if use_chip else 100)
+            for _ in range(0 if use_chip else 100)
         ]
 
     def start(self):
@@ -99,8 +102,9 @@ class MainScript(object):
         alpha = 0.9
 
         if self.gameflow.current_game is not None:
-            self.current_base_color *= alpha
-            self.current_base_color += self.gameflow.current_game.base_color() * (1.0 - alpha)
+            #self.current_base_color *= alpha
+            #self.current_base_color += self.gameflow.current_game.base_color() * (1.0 - alpha)
+            ...
 
         base_color = self.current_base_color
         bg_color = base_color * 0.1
@@ -113,37 +117,47 @@ class MainScript(object):
         for particle in self.line_particles:
             particle.step()
 
-        lines = [
-            # x, y, text, scale, rotation, color, opacity
-            (p.x, p.y, p.text, scale, p.rotation, self.current_base_color * 0.3, 0.1 * p.opacity)
-            for p in self.line_particles
-        ]
+        move_says_choices = ['MoveSaysBlue', 'MoveSaysGreen', 'MoveSaysPurple', 'MoveSaysRed']
+        move_says_now = move_says_choices[int(time.time())%len(move_says_choices)]
+
+        lines = []
 
         game_title, game_description, scores = self.gameflow.status_message()
 
-        y = 500.0
-        x = 30.0
+        image_name = {
+            'MoveSays': move_says_now,
+            'SafeCracker': 'SafeCrackerNormal',
+            'ShakeIt': 'ShakeIt',
+        }.get(game_title, 'ParleyWhoVertigo3')
+
+        y = 220.0
+        x = 20.0
         padding = 10
 
-        scale = 5.0
-        lines.append((x, y, game_title, scale, 0.0, base_color * 0.6, 1.0))
+        scale = 2.0
+        if image_name == 'ParleyWhoVertigo3' and game_title != 'AttractMode':
+            lines.append((x, y, game_title, scale, 0.0, base_color * 0.6, 1.0))
         y += 8 * scale + padding
 
-        x += padding
-
-        scale = 2.0
+        scale = 1.0
         lines.append((x, y, game_description, scale, 0.0, base_color * 0.4, 1.0))
         y += 8 * scale + padding
 
-        x = 80.0
-        y = 80.0
-        scale = 7.0
+        x = 10.0
+        y = 10.0
+        scale = 1.0
         for idx, score in enumerate(scores):
             lines.append((x, y, 'Player %d: %s pts' % (idx+1, score), scale, 0.0, base_color * 1.0, 1.0))
             y += 8 * scale + padding
 
         for x, y, text, scale, rotation, color, opacity in lines:
             self.renderer.enqueue(x, y, scale, rotation, to_rgba32(color, opacity), text)
+
+        image_id = self.renderer.lookup_image(image_name)
+        self.renderer.render_image(0, 0, 1.0, 0.0, 0xFFFFFFFF, image_id)
+
+        for p in self.line_particles:
+            self.renderer.render_image(p.x, p.y, 0.5, p.rotation, 0xFFFFFFFF, self.renderer.lookup_image(p.text))
 
         self.renderer.flush()
         if self.eglo is not None:
