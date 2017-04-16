@@ -17,11 +17,17 @@ import fontaine
 class Particle(object):
     NORMAL, FADING_OUT, FADING_IN = range(3)
 
+    BORDER = 50
+    MINX = -BORDER
+    MAXX = 480 + BORDER
+    MINY = -BORDER
+    MAXY = 272 + BORDER
+
     def __init__(self, text, dx, dy, rotation, dr):
         self.text = text
         self.state = self.FADING_IN
-        self.x = random.uniform(-1000, 1000)
-        self.y = random.uniform(-1000, 1000)
+        self.x = random.uniform(self.MINX, self.MAXX)
+        self.y = random.uniform(self.MINY, self.MAXY)
         self.dx = dx
         self.dy = dy
         self.rotation = rotation
@@ -44,20 +50,20 @@ class Particle(object):
                 self.reset()
             else:
                 self.opacity -= 0.02
-        elif self.x < -1000 or self.x > 1000:
+        elif self.x < self.MINX or self.x > self.MAXX:
             self.state = self.FADING_OUT
-        elif self.y < -1000 or self.y > 1000:
+        elif self.y < self.MINY or self.y > self.MAXY:
             self.state = self.FADING_OUT
 
     def reset(self):
-        if self.x < -1000:
-            self.x = 1000
-        elif self.x > 1000:
-            self.x = -1000
-        if self.y < -1000:
-            self.y = 1000
-        elif self.y > 1000:
-            self.y = -1000
+        if self.x < self.MINX:
+            self.x = self.MAXX
+        elif self.x > self.MAXX:
+            self.x = self.MINX
+        if self.y < self.MINY:
+            self.y = self.MAXY
+        elif self.y > self.MAXY:
+            self.y = self.MINY
         self.state = self.FADING_IN
 
 
@@ -69,7 +75,8 @@ class MainScript(object):
             self.eglo = eglo.EGLO()
         else:
             self.eglo = None
-        self.screen = self.mixer = sdlmixer.SDLMixer(480 if not use_chip else 0, 272 if not use_chip else 0)
+        scale = 2 if not use_chip else 0
+        self.screen = self.mixer = sdlmixer.SDLMixer(480*scale, 272*scale)
         self.renderer = fontaine.GLTextRenderer(480, 272, os.path.join(os.path.dirname(__file__), 'art', 'pwv.tile'))
 
         self.renderer.enable_blending()
@@ -80,7 +87,7 @@ class MainScript(object):
                                     'ControllerPurple', 'ControllerRed', 'ControllerWhite',
                                     'ControllerYellow']),
                      random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(0, 3), random.uniform(-0.005, 0.005))
-            for _ in range(0 if use_chip else 100)
+            for _ in range(5 if use_chip else 10)
         ]
 
     def start(self):
@@ -150,16 +157,22 @@ class MainScript(object):
             lines.append((x, y, 'Player %d: %s pts' % (idx+1, score), scale, 0.0, base_color * 1.0, 1.0))
             y += 8 * scale + padding
 
-        for x, y, text, scale, rotation, color, opacity in lines:
-            self.renderer.enqueue(x, y, scale, rotation, to_rgba32(color, opacity), text)
-
         image_id = self.renderer.lookup_image(image_name)
         self.renderer.render_image(0, 0, 1.0, 0.0, 0xFFFFFFFF, image_id)
 
+        self.renderer.flush()
+
         for p in self.line_particles:
-            self.renderer.render_image(p.x, p.y, 0.5, p.rotation, 0xFFFFFFFF, self.renderer.lookup_image(p.text))
+            self.renderer.render_image(p.x, p.y, 0.5, p.rotation, to_rgba32(Color(1, 1, 1), p.opacity),
+                                       self.renderer.lookup_image(p.text))
 
         self.renderer.flush()
+
+        for x, y, text, scale, rotation, color, opacity in lines:
+            self.renderer.enqueue(x, y, scale, rotation, to_rgba32(color, opacity), text)
+
+        self.renderer.flush()
+
         if self.eglo is not None:
             self.eglo.swap_buffers()
         else:
