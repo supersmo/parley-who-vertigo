@@ -14,59 +14,6 @@ import eglo
 import fontaine
 
 
-class Particle(object):
-    NORMAL, FADING_OUT, FADING_IN = range(3)
-
-    BORDER = 50
-    MINX = -BORDER
-    MAXX = 480 + BORDER
-    MINY = -BORDER
-    MAXY = 272 + BORDER
-
-    def __init__(self, text, dx, dy, rotation, dr):
-        self.text = text
-        self.state = self.FADING_IN
-        self.x = random.uniform(self.MINX, self.MAXX)
-        self.y = random.uniform(self.MINY, self.MAXY)
-        self.dx = dx
-        self.dy = dy
-        self.rotation = rotation
-        self.dr = dr
-        self.opacity = 0.0
-
-    def step(self):
-        self.x += self.dx
-        self.y += self.dy
-        self.rotation += self.dr
-        if self.state == self.FADING_IN:
-            if self.opacity >= 1.0:
-                self.opacity = 1.0
-                self.state = self.NORMAL
-            else:
-                self.opacity += 0.02
-        elif self.state == self.FADING_OUT:
-            if self.opacity <= 0.0:
-                self.opacity = 0.0
-                self.reset()
-            else:
-                self.opacity -= 0.02
-        elif self.x < self.MINX or self.x > self.MAXX:
-            self.state = self.FADING_OUT
-        elif self.y < self.MINY or self.y > self.MAXY:
-            self.state = self.FADING_OUT
-
-    def reset(self):
-        if self.x < self.MINX:
-            self.x = self.MAXX
-        elif self.x > self.MAXX:
-            self.x = self.MINX
-        if self.y < self.MINY:
-            self.y = self.MAXY
-        elif self.y > self.MAXY:
-            self.y = self.MINY
-        self.state = self.FADING_IN
-
-
 class MainScript(object):
     def __init__(self, api, use_chip):
         self.api = api
@@ -81,14 +28,6 @@ class MainScript(object):
 
         self.renderer.enable_blending()
         self.sounds = {}
-        self.current_base_color = Color(0.3, 0.3, 0.3)
-        self.line_particles = [
-            Particle(random.choice(['ControllerBlue', 'ControllerGreen', 'ControllerGrey',
-                                    'ControllerPurple', 'ControllerRed', 'ControllerWhite',
-                                    'ControllerYellow']),
-                     random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(0, 3), random.uniform(-0.005, 0.005))
-            for _ in range(5 if use_chip else 10)
-        ]
 
     def start(self):
         self.gameflow = GameFlow(self)
@@ -108,21 +47,12 @@ class MainScript(object):
     def update(self):
         alpha = 0.9
 
-        if self.gameflow.current_game is not None:
-            #self.current_base_color *= alpha
-            #self.current_base_color += self.gameflow.current_game.base_color() * (1.0 - alpha)
-            ...
-
-        base_color = self.current_base_color
-        bg_color = base_color * 0.1
-        self.renderer.clear(bg_color.r, bg_color.g, bg_color.b, 1.0)
+        base_color = Color(0.3, 0.3, 0.3)
+        self.renderer.clear(0.0, 0.0, 0.0, 1.0)
 
         now = time.time()
 
         scale = 12.0
-
-        for particle in self.line_particles:
-            particle.step()
 
         move_says_choices = ['MoveSaysBlue', 'MoveSaysGreen', 'MoveSaysPurple', 'MoveSaysRed']
         move_says_now = move_says_choices[int(time.time())%len(move_says_choices)]
@@ -159,12 +89,6 @@ class MainScript(object):
 
         image_id = self.renderer.lookup_image(image_name)
         self.renderer.render_image(0, 0, 1.0, 0.0, 0xFFFFFFFF, image_id)
-
-        self.renderer.flush()
-
-        for p in self.line_particles:
-            self.renderer.render_image(p.x, p.y, 0.5, p.rotation, to_rgba32(Color(1, 1, 1), p.opacity),
-                                       self.renderer.lookup_image(p.text))
 
         self.renderer.flush()
 
