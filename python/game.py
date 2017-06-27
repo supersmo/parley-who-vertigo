@@ -66,9 +66,7 @@ api.update()
 api.main_script.start()
 
 fup = FixedUpdate(30)
-gui = FixedUpdate(33)
 while not api.quit:
     api.update()
     fup.update(api.main_script.update)
-    gui.update(api.main_script.on_gui)
     time.sleep(1./60.)
