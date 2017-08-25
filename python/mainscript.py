@@ -20,12 +20,15 @@ class MainScript(object):
         self.api = api
         self.use_chip = use_chip
         self.coroutines = []
-        self._render_thread = threading.Thread(target=self.ui_loop)
-        self._render_thread.setDaemon(True)
-        self._render_thread.start()
+        if self.use_chip:
+            self._render_thread = threading.Thread(target=self.ui_loop)
+            self._render_thread.setDaemon(True)
+            self._render_thread.start()
+        else:
+            self.ui_setup()
         self.sounds = {}
 
-    def ui_loop(self):
+    def ui_setup(self):
         if self.use_chip:
             self.eglo = eglo.EGLO()
         else:
@@ -35,6 +38,9 @@ class MainScript(object):
         self.renderer = fontaine.GLTextRenderer(480, 272, os.path.join(os.path.dirname(__file__), 'art', 'pwv.tile'))
 
         self.renderer.enable_blending()
+
+    def ui_loop(self):
+        self.ui_setup()
 
         while True:
             self.render()
@@ -46,6 +52,8 @@ class MainScript(object):
     def update(self):
         self.gameflow.update()
         self.coroutines = [coroutine for coroutine in self.coroutines if coroutine.schedule()]
+        if not self.use_chip:
+            self.render()
 
     def render(self):
         self.renderer.clear(0.0, 0.0, 0.0, 1.0)
@@ -65,8 +73,13 @@ class MainScript(object):
 
         image_id = self.renderer.lookup_image(image_name)
         self.renderer.render_image(0, 0, 1.0, 0.0, 0xFFFFFFFF, image_id)
-
         self.renderer.flush()
+
+        if not self.use_chip:
+            self.renderer.enqueue(10, 10, 1.0, 0.0, 0x888888FF, game_title)
+            self.renderer.enqueue(10, 20, 1.0, 0.0, 0x888888FF, game_description)
+            self.renderer.enqueue(10, 30, 1.0, 0.0, 0x888888FF, self.gameflow.current_message)
+            self.renderer.flush()
 
         if self.eglo is not None:
             self.eglo.swap_buffers()
