@@ -33,7 +33,7 @@ class MainScript(object):
             self.eglo = eglo.EGLO()
         else:
             self.eglo = None
-        scale = 2 if not self.use_chip else 0
+        scale = 1 if not self.use_chip else 0
         self.screen = self.mixer = sdlmixer.SDLMixer(480*scale, 272*scale)
         self.renderer = fontaine.GLTextRenderer(480, 272, os.path.join(os.path.dirname(__file__), 'art', 'pwv.tile'))
 
