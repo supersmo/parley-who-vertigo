@@ -1,6 +1,0 @@
-Release im Dezember (alpha):
-
- - für macOS (.app zum einfachen starten mit UI)
- - für Pocket C.H.I.P zum selber installieren (manuell)
-
-Made with Pu-erh tea

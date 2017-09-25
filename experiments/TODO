@@ -1,8 +1,0 @@
-declaratively set properties
-
-players.bind(lambda player: player.p.set(alive=player.p.alive and not player.is_unstable))
-
-each player gets a color, nice color rainbow
-
-then we call for each player before update:
-   player.p.alive = player.p.alive and not player.is_unstable
