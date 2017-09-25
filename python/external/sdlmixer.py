@@ -29,11 +29,15 @@ class SDLMixer(sdl.SDL):
         self.Mix_PlayChannelTimed.argtypes = [c_int, c_void_p, c_int, c_int]
         self.Mix_FreeChunk = self.libSDL_mixer.Mix_FreeChunk
         self.Mix_FreeChunk.argtypes = [c_void_p]
+        self.Mix_AllocateChannels = self.libSDL_mixer.Mix_AllocateChannels
+        self.Mix_AllocateChannels.argtypes = [c_int]
 
         self.Mix_Init(0)
 
         if self.Mix_OpenAudio(frequency, self.AUDIO_S16LSB, channels, 1024) == -1:
             raise RuntimeError(SDL_GetError().decode('utf-8'))
+
+        self.Mix_AllocateChannels(64)
 
     def load(self, filename):
         rw = self.SDL_RWFromFile(c_char_p(filename.encode('utf-8')), c_char_p(b'rb'))
