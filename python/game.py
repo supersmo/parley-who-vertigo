@@ -4,6 +4,8 @@ import os
 import sys
 import platform
 
+os.chdir(os.path.dirname(__file__))
+
 EXTERNAL = os.path.join(os.path.dirname(__file__), 'external')
 
 sys.path.insert(0, EXTERNAL)
@@ -16,6 +18,8 @@ if platform.system() == 'Linux' and os.path.exists('/usr/bin/pocket-home'):
     use_chip = True
 elif platform.system() == 'Darwin':
     ctypes_dll_search.library_path = os.path.join(EXTERNAL, 'macos')
+elif platform.system() == 'Windows':
+    ctypes_dll_search.library_path = os.path.join(EXTERNAL, 'win32')
 else:
     print('Unknown/unsupported platform:', platform.system())
 
