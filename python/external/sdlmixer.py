@@ -35,7 +35,7 @@ class SDLMixer(sdl.SDL):
         self.Mix_Init(0)
 
         if self.Mix_OpenAudio(frequency, self.AUDIO_S16LSB, channels, 1024) == -1:
-            raise RuntimeError(SDL_GetError().decode('utf-8'))
+            raise RuntimeError(self.SDL_GetError().decode('utf-8'))
 
         self.Mix_AllocateChannels(64)
 
