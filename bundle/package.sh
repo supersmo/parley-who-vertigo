@@ -11,7 +11,8 @@ DEST="$OUT/Parley Who Vertigo.app"
 rm -rf "$OUT"
 mkdir -p "$OUT" "$DEST/Contents/MacOS" "$DEST/Contents/Resources"
 
-cp $SRC/README.txt "$OUT"
+cp $SRC/README.md "$OUT"
+cp $SRC/LICENSE "$OUT"
 cp $SRC/docs/*.pdf "$OUT"
 
 cp "$DIR/macos/Info.plist" "$DEST/Contents"
@@ -40,7 +41,8 @@ rm -rf "$OUT"
 
 mkdir -p "$OUT"
 
-cp $SRC/README.txt "$OUT"
+cp $SRC/README.md "$OUT"
+cp $SRC/LICENSE "$OUT"
 cp $SRC/docs/*.pdf "$OUT"
 
 cp -rpv \
@@ -62,7 +64,8 @@ rm -rf "$OUT"
 
 mkdir -p "$OUT"
 
-cp $SRC/README.txt "$OUT"
+cp $SRC/README.md "$OUT"
+cp $SRC/LICENSE "$OUT"
 cp $SRC/docs/*.pdf "$OUT"
 
 cp -rpv \
